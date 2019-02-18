@@ -1,4 +1,5 @@
 import os
+import re
 import sys
 import urllib
 import urlparse
@@ -15,6 +16,7 @@ def readGameLinks(url, cur=1):
             if 'chessgame?gid' in link.get("href"):
                 parsed = dict(urlparse.parse_qsl(urlparse.urlsplit(link.get("href")).query))
                 links.append(parsed['gid'])
+                
             elif 'page=' in link.get("href") and hasNext == False:
                 page = int(link.get('href').split('page=')[1].split('&')[0])
                 if page == cur + 1:
@@ -25,11 +27,22 @@ def readGameLinks(url, cur=1):
     return links
 
 def readPGN(url):
-    return urllib.urlopen(url).read()
+    return parseGameData(urllib.urlopen(url).read())
 
 def readGame(game):
     url = 'http://www.chessgames.com/perl/nph-chesspgn?gid={0}&text=1'.format(game)
     return readPGN(url) + '\n'
+
+def parseGameData(data):
+    data = data.split(']', 5)[-1]
+    result = data.split(']',1)[0].split('[',1)[-1]
+    #print(data)
+    game = re.sub(".*1","1",data.split(']')[-1],1)
+    print("Result:" + result)
+    print("Game:" + game)
+    return data
+
+
 
 # http://www.chessgames.com/perl/chessplayer?pid=24694
 url = sys.argv[1]
