@@ -37,10 +37,11 @@ def parseGameData(data):
     data = data.split(']', 5)[-1]
     result = data.split(']',1)[0].split('[',1)[-1]
     #print(data)
-    game = re.sub(".*1","1",data.split(']')[-1],1)
-    print("Result:" + result)
-    print("Game:" + game)
-    return data
+    game = data.split(']')[-1]
+    #print("Result:" + result)
+    #print("Game:" + game)
+    print(game)
+    return result + game  
 
 
 
