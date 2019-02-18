@@ -40,8 +40,11 @@ def parseGameData(data):
     game = data.split(']')[-1]
     #print("Result:" + result)
     #print("Game:" + game)
-    print(game)
-    return result + game  
+    #print(game)
+    dic = {}
+    dic["r"] = result
+    dic["g"] = game
+    return dic
 
 
 
@@ -60,3 +63,4 @@ games = list(reversed(readGameLinks(url)))
 results = [readGame(i) for i in games]
 
 print ''.join(results)
+
