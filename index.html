@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+  <head>
+	<script src="https://d3js.org/d3.v5.min.js"></script>
+  </head>
+  <body>
+  </body>
+  <script>
+	// Code taken and modified from: https://codepen.io/VividD/pen/bNgGKP
+	var board =[];
+	var posChar = ["h","g","f","e","d","c","b","a"]
+	var count = 8;
+	var tempCount = 8;
+	var lastChar = "a";
+	var colCount = 1;
+	var pieceCount = 0;
+	var index = 0;
+	var div;
+	var svg;
+	var selected;
+	var dy = 35;
+	var dx = 20;
+	var piece = [{n:"bRook", p: "a8",c:"\u265C"},
+	{n:"bKnight", p: "b8",c:"\u265E"},{n:"bBishop", p: "c8",c:"\u265D"},
+	{n:"bKing", p: "d8",c:"\u265A"},{n:"bQueen", p: "e8",c:"\u265B"},
+	{n:"bBishop", p: "f8",c:"\u265D"},{n:"bKnight", p: "g8",c:"\u265E"},
+	{n:"bRook", p: "h8",c:"\u265C"},{n:"bPawn1", p: "a7",c:"\u265F"},
+	{n:"bPawn2", p: "b7",c:"\u265F"},{n:"bPawn3", p: "c7",c:"\u265F"},
+	{n:"bPawn4", p: "d7",c:"\u265F"},{n:"bPawn5", p: "e7",c:"\u265F"},
+	{n:"bPawn6", p: "f7",c:"\u265F"},{n:"bPawn7", p: "g7",c:"\u265F"},
+	{n:"bPawn8", p: "h7",c:"\u265F"},
+	{n:"wPawn1", p: "a2",c:"\u2659"},{n:"wPawn2", p: "b2",c:"\u2659"},
+	{n:"wPawn3", p: "c2",c:"\u2659"},{n:"wPawn4", p: "d2",c:"\u2659"},
+	{n:"wPawn5", p: "e2",c:"\u2659"},{n:"wPawn6", p: "f2",c:"\u2659"},
+	{n:"wPawn7", p: "g2",c:"\u2659"},{n:"wPawn8", p: "h2",c:"\u2659"},
+	{n:"wRook", p: "a1", c:"\u2656"},
+	{n:"wKnight", p: "b1",c:"\u2658"},{n:"wBishop", p: "c1",c:"\u2657"},
+	{n:"wKing", p: "d1",c:"\u2654"},{n:"wQueen", p: "e1",c:"\u2655"},
+	{n:"wBishop", p: "f1",c:"\u2657"},{n:"wKnight", p: "g1",c:"\u2658"},
+	{n:"wRook", p: "h1",c:"\u2656"}]
+	
+	makeChessBoard();
+	function makeChessBoard(){
+		var marginTop = 30,
+        marginLeft = 30,
+        fieldSize = 40,
+        boardDimension = 8,
+        boardSize = boardDimension*fieldSize;
+
+    
+    for(var i = 0; i < boardDimension*boardDimension; i++) {
+        board.push({
+            x: i % boardDimension,
+            y: Math.floor(i / boardDimension),
+            piece: 0
+        });
+    };
+
+    div = d3.select("body")
+        .append("div")
+        .style("position", "fixed")
+        .style("top", marginTop + "px")
+        .style("left", marginLeft + "px")
+        .style("width", boardSize + "px")
+        .style("height", boardSize + "px");
+
+    svg = div.append("svg")
+         .attr("width", boardSize + "px")
+         .attr("height", boardSize + "px")
+         .append("g");
+
+    svg.selectAll("rect")
+		 .data(board)
+		 .enter()
+		 .append("rect")
+         .attr("id", 
+		 function(){
+			count--;
+			var tCount = count;
+			var tCol = tempCount;
+			if(count == 0){
+				tempCount--;
+				count = 8;
+			}
+            return posChar[tCount] + (tCol);					 
+		 })
+         .attr("x", function (d) {
+             return d.x*fieldSize;
+         })
+         .attr("y", function (d) {
+             return d.y*fieldSize;
+         })
+         .attr("width", fieldSize + "px")
+         .attr("height", fieldSize + "px")
+         .style("fill", function (d) {
+             if ( ((d.x%2 == 0) && (d.y%2 == 0)) ||
+                  ((d.x%2 == 1) && (d.y%2 == 1))    ) 
+                 return "beige";
+             else
+                 return "tan";
+         })
+		 .on("click", function(){
+			var dx = d3.select(this).attr("x");
+			var dy = d3.select(this).attr("y");
+			
+		 });
+
+    svg.selectAll("text")
+		.data(piece)
+		.enter()
+		.append("text")
+		.attr("id", function(d){return d.n;})
+        .style("font-size", "30")
+        .attr("text-anchor", "middle")
+        .text(function(d){return d.c;})
+		.attr("y", function(d){return +d3.select("#" + d.p).attr("y") + 30})
+        .attr("x", function(d){return +d3.select("#" + d.p).attr("x") + 20;})
+		.on("click", function(){selected = d3.select(this).attr("id")});
+	}
+					  
+    </script>
+</html>
