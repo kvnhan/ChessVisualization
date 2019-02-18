@@ -1,3 +1,8 @@
+## Source
+
+Scraper modified from:
+https://github.com/student-t/ExtractPGN
+
 ## Summary
 
 [Chessgames](http://www.chessgames.com) provides mechanism for accessing the latest chess games. Unfortunatley, the site is reluctant to offer a single PGN file for the games without premium membership.
