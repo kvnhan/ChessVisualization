@@ -18,13 +18,14 @@
 	var div;
 	var svg;
 	var selected;
+	var selectedText;
 	var dy = 35;
 	var dx = 20;
-	var piece = [{n:"bRook", p: "a8",c:"\u265C"},
-	{n:"bKnight", p: "b8",c:"\u265E"},{n:"bBishop", p: "c8",c:"\u265D"},
+	var piece = [{n:"bRook1", p: "a8",c:"\u265C"},
+	{n:"bKnight1", p: "b8",c:"\u265E"},{n:"bBishop1", p: "c8",c:"\u265D"},
 	{n:"bKing", p: "d8",c:"\u265A"},{n:"bQueen", p: "e8",c:"\u265B"},
-	{n:"bBishop", p: "f8",c:"\u265D"},{n:"bKnight", p: "g8",c:"\u265E"},
-	{n:"bRook", p: "h8",c:"\u265C"},{n:"bPawn1", p: "a7",c:"\u265F"},
+	{n:"bBishop2", p: "f8",c:"\u265D"},{n:"bKnight2", p: "g8",c:"\u265E"},
+	{n:"bRook2", p: "h8",c:"\u265C"},{n:"bPawn1", p: "a7",c:"\u265F"},
 	{n:"bPawn2", p: "b7",c:"\u265F"},{n:"bPawn3", p: "c7",c:"\u265F"},
 	{n:"bPawn4", p: "d7",c:"\u265F"},{n:"bPawn5", p: "e7",c:"\u265F"},
 	{n:"bPawn6", p: "f7",c:"\u265F"},{n:"bPawn7", p: "g7",c:"\u265F"},
@@ -33,11 +34,11 @@
 	{n:"wPawn3", p: "c2",c:"\u2659"},{n:"wPawn4", p: "d2",c:"\u2659"},
 	{n:"wPawn5", p: "e2",c:"\u2659"},{n:"wPawn6", p: "f2",c:"\u2659"},
 	{n:"wPawn7", p: "g2",c:"\u2659"},{n:"wPawn8", p: "h2",c:"\u2659"},
-	{n:"wRook", p: "a1", c:"\u2656"},
-	{n:"wKnight", p: "b1",c:"\u2658"},{n:"wBishop", p: "c1",c:"\u2657"},
+	{n:"wRook1", p: "a1", c:"\u2656"},
+	{n:"wKnight1", p: "b1",c:"\u2658"},{n:"wBishop1", p: "c1",c:"\u2657"},
 	{n:"wKing", p: "d1",c:"\u2654"},{n:"wQueen", p: "e1",c:"\u2655"},
-	{n:"wBishop", p: "f1",c:"\u2657"},{n:"wKnight", p: "g1",c:"\u2658"},
-	{n:"wRook", p: "h1",c:"\u2656"}]
+	{n:"wBishop2", p: "f1",c:"\u2657"},{n:"wKnight2", p: "g1",c:"\u2658"},
+	{n:"wRook2", p: "h1",c:"\u2656"}]
 	
 	makeChessBoard();
 	function makeChessBoard(){
@@ -101,21 +102,30 @@
          })
 		 .on("click", function(){
 			var dx = d3.select(this).attr("x");
-			var dy = d3.select(this).attr("y");
-			
+			var dy = d3.select(this).attr("y");	
+			var thisPiece = d3.select("#" + selected);
+			var thisPieceX = d3.select("#" + selectedText).attr("x", 20);
+			var thisPieceY = d3.select("#" + selectedText).attr("y", 30);
+			console.log(dx, dy)
+			thisPiece.attr("transform", "translate(" + (dx) + ", " + (dy)+ ")");
 		 });
 
-    svg.selectAll("text")
+    var chessPiece = svg.selectAll("text")
 		.data(piece)
 		.enter()
-		.append("text")
+		.append("g")
 		.attr("id", function(d){return d.n;})
+		.attr("transform", "translate(0,0)")
+		.on("click", function(){selected = d3.select(this).attr("id")});
+		
+	chessPiece.append("text")
         .style("font-size", "30")
+		.attr("id", function(d){return "text" + d.n;})
         .attr("text-anchor", "middle")
         .text(function(d){return d.c;})
 		.attr("y", function(d){return +d3.select("#" + d.p).attr("y") + 30})
         .attr("x", function(d){return +d3.select("#" + d.p).attr("x") + 20;})
-		.on("click", function(){selected = d3.select(this).attr("id")});
+		.on("click", function(){selectedText = d3.select(this).attr("id")});
 	}
 					  
     </script>
