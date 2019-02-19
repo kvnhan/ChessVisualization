@@ -103,10 +103,10 @@
 		 .on("click", function(){
 			var dx = d3.select(this).attr("x");
 			var dy = d3.select(this).attr("y");	
+			findandSetNewPiece(selected, d3.select(this).attr("id"))
 			var thisPiece = d3.select("#" + selected);
 			var thisPieceX = d3.select("#" + selectedText).attr("x", 20);
 			var thisPieceY = d3.select("#" + selectedText).attr("y", 30);
-			console.log(dx, dy)
 			thisPiece.attr("transform", "translate(" + (dx) + ", " + (dy)+ ")");
 		 });
 
@@ -127,6 +127,13 @@
         .attr("x", function(d){return +d3.select("#" + d.p).attr("x") + 20;})
 		.on("click", function(){selectedText = d3.select(this).attr("id")});
 	}
-					  
+					
+	function findandSetNewPiece(pieceName, newLoc){
+		piece.forEach(function(i){
+			if(pieceName == i.n){
+				i.p = newLoc
+			}
+		})
+	}
     </script>
 </html>
