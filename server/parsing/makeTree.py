@@ -31,9 +31,6 @@ class moveTree:
 			r["blackW"] = mv.blackW / mv.numInstances
 			r["draw"] = mv.draws / mv.numInstances
 			mvList.append(r)
-			if(len(mvList) >= 10):
-				break
-
 		return mvList
 
 def getNumInstances(tree):

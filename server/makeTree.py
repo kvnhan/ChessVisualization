@@ -90,8 +90,10 @@ def readGame(moveSet):
             mv.pop(2)
         mvList.extend(mv)
 
+
     if(len(mvList) > 0):
         addGame(mvList, origin, result)
+    
 
 origin = moveTree()
 origin.name = "origin"
