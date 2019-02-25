@@ -25,6 +25,7 @@
   <script>
 	// Code taken and modified from: https://codepen.io/VividD/pen/bNgGKP
 	var board =[];
+	var colorScale = d3.scaleOrdinal(d3.schemeCategory10);
 	var firstView, secondView, thirdView, fourthView;
 	var posChar = ["h","g","f","e","d","c","b","a"]
 	var count = 8;
@@ -192,6 +193,7 @@
 	firstView.append("rect")
 			 .attr("id", "firstView")
 			 .attr("fill", "white")
+			 .attr("stroke", "black")
 		     .attr("height", ((fieldSize * fieldSize)/40))
 			 .attr("width", ((fieldSize * fieldSize)/8.7))
 			 .attr("transform", "translate(12, 14)");
@@ -201,33 +203,37 @@
 	secondView.append("rect")
 			  .attr("id", "secondView")
 			  .attr("fill", "white")
-			  .attr("height", ((fieldSize * fieldSize)/30))
+			  .attr("stroke", "black")
+			  .attr("height", ((fieldSize * fieldSize)/29))
 			  .attr("width", ((fieldSize * fieldSize)/8.7));
 					  
 	thirdView = infoView.append("g")
-	                    .attr("transform", "translate(12, 409)");
+	                    .attr("transform", "translate(12, 415)");
 	thirdView.append("rect")
 			 .attr("id", "thirdView")
 			 .attr("fill", "white")
+			 .attr("stroke", "black")
 			 .attr("height", ((fieldSize * fieldSize)/30))
 			 .attr("width", ((fieldSize * fieldSize)/18));
 			 
 	
     fourthView = infoView.append("g")
-	                     .attr("transform", "translate(392, 409)");
+	                     .attr("transform", "translate(392, 415)");
 	fourthView.append("rect")
 			 .attr("id", "fourthView")
 			 .attr("fill", "white")
+			 .attr("stroke", "black")
 			 .attr("height", ((fieldSize * fieldSize)/30))
 			 .attr("width", ((fieldSize * fieldSize)/18));
 			 	
 					  
       }
 
-
+	  var secViewwidth = ((fieldSize * fieldSize)/8.7) - 200;
+	  var secViewheight = ((fieldSize * fieldSize)/30) - 31;
       var domainData = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"];
-      var xScale = d3.scaleBand().range([0, 500]).padding(0.5);
-      var yScale = d3.scaleLinear().range([300, 0]);
+      var xScale = d3.scaleBand().range([0, 500]).padding(0.2);
+      var yScale = d3.scaleLinear().range([300, 120]);
 
 
       createBarChart();
@@ -237,7 +243,9 @@
           var value = Math.floor(Math.random() * (+max - +min)) + +min;
           return value;
       }
+	  
       function createBarChart() {
+		  
           var sampleData = [];
           var loev = [];
           domainData.forEach(function (i) {
@@ -250,18 +258,37 @@
               sampleData.push({ length: v, name: i, count: v, value: v, axis: i });
           });
 
-
+		  
+			   
           xScale.domain(domainData);
           yScale.domain([0, 150]);
 			
 		  var graph = secondView.append("g")
 	                 .attr("class", "graph")
-	                 .attr("transform", "translate(150, 0)");
+	                 .attr("transform", "translate(100, -5)");
+					 
+		  graph.append("rect")
+		       .attr("height", secViewheight)
+			   .attr("width", secViewwidth)
+			   .attr("transform", "translate(0, 20)")
+			   .attr("fill", "lightgrey")
+			   .attr("opacity", 0.4);
 
+          graph.append("g")
+	           .attr("transform", "translate(0,200)")
+               .call(d3.axisBottom(xScale)
+	           .tickSize(0));
+		  
+	      graph.append("g")
+			   .attr("class", "grid")
+			   .attr("transform", "translate(0,-100)")
+		       .call(d3.axisLeft(yScale)
+	           .tickSize(-secViewwidth))
+			   
           var bar = graph.selectAll("rect").data(sampleData)
               .enter()
               .append("rect")
-              .style("fill", "blue")
+              .style("fill", function(d, i){return colorScale(i);})
               .attr("stroke", "black")
               .attr("id", function (d) { return d.name; })
               .attr("x", function (d) { return xScale(d.name); })
@@ -292,11 +319,11 @@
 
           var arc = d3.arc()
               .innerRadius(0)
-              .outerRadius(75);
+              .outerRadius(90);
 
           var graph = thirdView.append("g")
 	                 .attr("class", "graph")
-	                 .attr("transform", "translate(175, 120)");
+	                 .attr("transform", "translate(175, 110)");
 					
 
           var piecharts = graph.selectAll("path")
@@ -306,8 +333,8 @@
               .attr("d", arc)
               .attr("id", function (i) { return i.data.name; })
               .attr("stroke", "black")
-              .attr("fill", function () {
-                  return "none";
+              .attr("fill", function (d, i) {
+                  return colorScale(i);
               });
 
       }
