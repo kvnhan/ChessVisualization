@@ -104,7 +104,7 @@ num_lines = sum(1 for line in open('carlsen.pgn'))
 for x in range(num_lines):
         readGame(moveSet)
 '''
-for filename in glob.glob('data/*.pgn'):
+for filename in glob.glob('parsing/data/*.pgn'):
     print(filename)
     with open(filename) as f:
         numlines = sum(1 for line in open(filename))
