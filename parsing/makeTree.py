@@ -17,6 +17,11 @@ class moveTree:
 		print("Draws = ", self.draws)
 		print("Num Instances = ", self.numInstances)
 		print("Moves size = ", len(self.moves))
+        
+        def getStatistics(self):
+            r = {}
+            print("TODO") #TODO
+            return r
 
 def containsMove(moveTree, move):
 	val = False
