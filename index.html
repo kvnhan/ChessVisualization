@@ -25,6 +25,7 @@
   <script>
 	// Code taken and modified from: https://codepen.io/VividD/pen/bNgGKP
 	var board =[];
+	var firstView, secondView, thirdView, fourthView;
 	var posChar = ["h","g","f","e","d","c","b","a"]
 	var count = 8;
 	var factor = 2;
@@ -179,10 +180,46 @@
 		
 	var infoView = d3.select("#chart2")
 					 .style("height", ((fieldSize * fieldSize)/10) + "px")
-					 .style("width", ((fieldSize * fieldSize)/10 + 100) + "px")
-				     .style("background-color", "steelblue");
+					 .style("width", ((fieldSize * fieldSize)/10 + 120) + "px")
+				     .style("margin-right", "100px")
+					 .style("background-color", "lightgrey")
+					 .append("svg")
+					 .attr("height", ((fieldSize * fieldSize)/10))
+					 .attr("width", ((fieldSize * fieldSize)/10 + 120));
+	
+	
+	firstView = infoView.append("g");
+	firstView.append("rect")
+			 .attr("id", "firstView")
+			 .attr("fill", "white")
+		     .attr("height", ((fieldSize * fieldSize)/40))
+			 .attr("width", ((fieldSize * fieldSize)/8.7))
+			 .attr("transform", "translate(12, 14)");
 					 
-				 
+	secondView = infoView.append("g");
+	secondView.append("rect")
+			  .attr("id", "secondView")
+			  .attr("fill", "white")
+			  .attr("height", ((fieldSize * fieldSize)/30))
+			  .attr("width", ((fieldSize * fieldSize)/8.7))
+			  .attr("transform", "translate(12, 184)");
+					  
+	thirdView = infoView.append("g");
+	thirdView.append("rect")
+			 .attr("id", "thirdView")
+			 .attr("fill", "white")
+			 .attr("height", ((fieldSize * fieldSize)/30))
+			 .attr("width", ((fieldSize * fieldSize)/18))
+			 .attr("transform", "translate(12, 409)");
+	
+    fourthView = infoView.append("g");
+	thirdView.append("rect")
+			 .attr("id", "fourthView")
+			 .attr("fill", "white")
+			 .attr("height", ((fieldSize * fieldSize)/30))
+			 .attr("width", ((fieldSize * fieldSize)/18))
+			 .attr("transform", "translate(392, 409)");	
+					  
 	}
 	</script>
 </html>
