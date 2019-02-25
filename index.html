@@ -213,7 +213,7 @@
 			 .attr("transform", "translate(12, 409)");
 	
     fourthView = infoView.append("g");
-	thirdView.append("rect")
+	fourthView.append("rect")
 			 .attr("id", "fourthView")
 			 .attr("fill", "white")
 			 .attr("height", ((fieldSize * fieldSize)/30))
@@ -222,7 +222,14 @@
 					  
       }
 
+
+      var domainData = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"];
+      var xScale = d3.scaleBand().range([0, 500]).padding(0.5);
+      var yScale = d3.scaleLinear().range([300, 0]);
+
+
       createBarChart();
+      createPieChart();
       //Side box stuff
       function randNum(max, min) {
           var value = Math.floor(Math.random() * (+max - +min)) + +min;
@@ -232,19 +239,11 @@
           //Zooms and pans
 
 
-          var domainData = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"];
-          var xScale = d3.scaleBand().range([0, 500]).padding(0.5);
-          var yScale = d3.scaleLinear().range([300, 0]);
 
-          //graph = secondView.append("svg")
-          //    .attr("id", "graph");
 
-          //g = graph.append("g")
-          //    .attr("id", "theGraph");
 
           var sampleData = [];
           var loev = [];
-          var sampleData = [];
           domainData.forEach(function (i) {
               var v = randNum(78, 6);
               var total = 200;
@@ -272,6 +271,47 @@
               .attr("y", function (d) { return yScale(d.count) - 100; })
               .attr('height', function (d) { return 300 - yScale(d.count); })
               .attr('width', xScale.bandwidth());
+
+      }
+
+      function createPieChart() {
+
+          var sampleData = [];
+          var loev = [];
+          domainData.forEach(function (i) {
+              var v = randNum(78, 6);
+              var total = 200;
+              while (loev.includes(v)) {
+                  v = randNum(78, 6);
+              }
+              loev.push(v);
+              sampleData.push({ length: v, name: i, count: v, value: v, axis: i });
+          });
+
+          var pie = d3.pie()
+              .value(function (d) { return d.count; })
+              .sort(null)
+              (sampleData);
+
+          var arc = d3.arc()
+              .innerRadius(0)
+              .outerRadius(150);
+
+          var piechart = thirdView.append("g")
+              .attr("transform", "translate(120, 580)")
+
+
+          var piecharts = piechart.selectAll("path")
+              .data(pie)
+              .enter()
+              .append("path")
+              .attr("d", arc)
+              //.attr("transform", "translate(300, 250)")
+              .attr("id", function (i) { return i.data.name; })
+              .attr("stroke", "black")
+              .attr("fill", function () {
+                  return "none";
+              });
 
       }
 	</script>
