@@ -1,4 +1,5 @@
 import ast
+import glob
 
 class moveTree:
 	def __init__(self):
@@ -36,17 +37,23 @@ def addResult(tree, result):
 
 	if(result == "1/2-1/2"):
 		tree.draws += 1
-	if(result == "1-0"):
+	elif(result == "1-0"):
 		tree.whiteW += 1
-	if(result == "0-1"):
+	elif(result == "0-1"):
 		tree.blackW += 1
+	else:
+		return -1
+
+	tree.numInstances += 1
+	return 0
 
 def addGame(moveSet, tree, result):
 	move = moveSet.pop(0)
 
 	if(containsMove(tree, move)):
 		#add result
-		addResult(tree, result)
+		if(addResult(tree, result) == -1):
+			return
 
 		if(len(moveSet) > 0):
 			addGame(moveSet, getMove(tree, move), result)
@@ -55,7 +62,8 @@ def addGame(moveSet, tree, result):
 		tree.moves.append(moveTree())
 		tree.moves[len(tree.moves) - 1].name = move
 		#add result
-		addResult(tree.moves[len(tree.moves) - 1], result)
+		if(addResult(tree, result) == -1):
+			return
 
 		if(len(moveSet) > 0):
 			addGame(moveSet, getMove(tree, move), result)
@@ -87,34 +95,10 @@ origin.name = "origin"
 moveSet = open("carlsen.pgn", "r")
 
 num_lines = sum(1 for line in open('carlsen.pgn'))
-print("num lines is ", num_lines)
 
 #CHANGE
-for x in range(10):
+for x in range(num_lines):
 	readGame(moveSet)
 
-white = 0
-black = 0
-draw = 0
 
-white2 = 0
-black2 = 0
-draw2 = 0
 origin.printValues()
-
-for x in origin.moves:
-	white += x.whiteW
-	black += x.blackW
-	draw += x.draws
-	for y in x.moves:
-		white2 += y.whiteW
-		black2 += y.blackW
-		draw2 += y.draws
-
-print(white)
-print(black)
-print(draw)
-
-print(white2)
-print(black2)
-print(draw2)
