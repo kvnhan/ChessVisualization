@@ -4,7 +4,6 @@ import glob
 class moveTree:
 	def __init__(self):
 		self.name = ""
-		self.winPct = 0
 		self.whiteW = 0
 		self.blackW = 0
 		self.draws = 0
@@ -13,7 +12,6 @@ class moveTree:
 
 	def printValues(self):
 		print("Name = " + self.name)
-		print("Win% = ", self.winPct)
 		print("White wins = ", self.whiteW)
 		print("Black Wins= ", self.blackW)
 		print("Draws = ", self.draws)
@@ -61,6 +59,7 @@ def addGame(moveSet, tree, result):
 	else:
 		tree.moves.append(moveTree())
 		tree.moves[len(tree.moves) - 1].name = move
+
 		#add result
 		if(addResult(tree, result) == -1):
 			return
@@ -91,7 +90,7 @@ def readGame(moveSet):
 
 origin = moveTree()
 origin.name = "origin"
-
+'''
 moveSet = open("carlsen.pgn", "r")
 
 num_lines = sum(1 for line in open('carlsen.pgn'))
@@ -99,6 +98,13 @@ num_lines = sum(1 for line in open('carlsen.pgn'))
 #CHANGE
 for x in range(num_lines):
 	readGame(moveSet)
-
+'''
+for filename in glob.glob('data/*.pgn'):
+    print(filename)
+    with open(filename) as f:
+        numlines = sum(1 for line in open(filename))
+        print("numlines:" + str(numlines))
+        for x in range(numlines):
+            readGame(f)
 
 origin.printValues()
