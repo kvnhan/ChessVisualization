@@ -1,9 +1,9 @@
 import ast
+import glob
 
 class moveTree:
 	def __init__(self):
 		self.name = ""
-		self.winPct = 0
 		self.whiteW = 0
 		self.blackW = 0
 		self.draws = 0
@@ -12,7 +12,6 @@ class moveTree:
 
 	def printValues(self):
 		print("Name = " + self.name)
-		print("Win% = ", self.winPct)
 		print("White wins = ", self.whiteW)
 		print("Black Wins= ", self.blackW)
 		print("Draws = ", self.draws)
@@ -45,7 +44,7 @@ def addGame(moveSet, tree, result):
 	move = moveSet.pop(0)
 
 	if(containsMove(tree, move)):
-		#add result
+		#adds result
 		addResult(tree, result)
 
 		if(len(moveSet) > 0):
@@ -54,7 +53,7 @@ def addGame(moveSet, tree, result):
 	else:
 		tree.moves.append(moveTree())
 		tree.moves[len(tree.moves) - 1].name = move
-		#add result
+		#adds result
 		addResult(tree.moves[len(tree.moves) - 1], result)
 
 		if(len(moveSet) > 0):
@@ -83,7 +82,7 @@ def readGame(moveSet):
 
 origin = moveTree()
 origin.name = "origin"
-
+'''
 moveSet = open("carlsen.pgn", "r")
 
 num_lines = sum(1 for line in open('carlsen.pgn'))
@@ -92,29 +91,36 @@ print("num lines is ", num_lines)
 #CHANGE
 for x in range(10):
 	readGame(moveSet)
+'''
+for filename in glob.glob('data/*.pgn'):
+    print(filename)
+    with open(filename) as f:
+        numlines = sum(1 for line in open(filename))
+        print("numlines:" + str(numlines))
+        for x in range(numlines):
+            readGame(f)
 
-white = 0
-black = 0
-draw = 0
+        white = 0
+        black = 0
+        draw = 0
 
-white2 = 0
-black2 = 0
-draw2 = 0
-origin.printValues()
+        white2 = 0
+        black2 = 0
+        draw2 = 0
 
-for x in origin.moves:
-	white += x.whiteW
-	black += x.blackW
-	draw += x.draws
-	for y in x.moves:
-		white2 += y.whiteW
-		black2 += y.blackW
-		draw2 += y.draws
+        for x in origin.moves:
+                white += x.whiteW
+                black += x.blackW
+                draw += x.draws
+                for y in x.moves:
+                        white2 += y.whiteW
+                        black2 += y.blackW
+                        draw2 += y.draws
 
-print(white)
-print(black)
-print(draw)
+        print(white)
+        print(black)
+        print(draw)
 
-print(white2)
-print(black2)
-print(draw2)
+        print(white2)
+        print(black2)
+        print(draw2)
