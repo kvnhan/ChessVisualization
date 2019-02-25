@@ -17,11 +17,27 @@ class moveTree:
 		print("Draws = ", self.draws)
 		print("Num Instances = ", self.numInstances)
 		print("Moves size = ", len(self.moves))
-        
-        def getStatistics(self):
-            r = {}
-            print("TODO") #TODO
-            return r
+
+    
+	def getStatistics(self):
+		mvList = []
+
+		self.moves.sort(reverse=True, key=getNumInstances)
+
+		for mv in self.moves:
+			r = {}
+			r["name"] = mv.name
+			r["whiteW"] = mv.whiteW / mv.numInstances
+			r["blackW"] = mv.blackW / mv.numInstances
+			r["draw"] = mv.draws / mv.numInstances
+			mvList.append(r)
+			if(len(mvList) >= 10):
+				break
+
+		return mvList
+
+def getNumInstances(tree):
+	return tree.numInstances
 
 def containsMove(moveTree, move):
 	val = False
@@ -113,3 +129,5 @@ for filename in glob.glob('data/*.pgn'):
             readGame(f)
 
 origin.printValues()
+
+origin.getStatistics()
