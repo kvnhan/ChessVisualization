@@ -124,3 +124,4 @@ for filename in glob.glob('data/*.pgn'):
         print(white2)
         print(black2)
         print(draw2)
+origin.printValues()
