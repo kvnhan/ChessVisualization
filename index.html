@@ -1,318 +1,303 @@
 <!DOCTYPE html>
 <html>
-  <style>
-	.container1 {
-		float: left;
-	}
-	
-	.container2 {
-		float: right;
-	}
-	
-	.container1.5 {
-		margin-right: auto;
-		margin-left: auto;
-	}
-  </style>
-  <head>
-	<script src="https://d3js.org/d3.v5.min.js"></script>
-  </head>
-  <body>
-	<div class="container1" id="chart1"></div>
-	<div class="container1.5" id="centerArea"></div>
-	<div class="container2" id="chart2"></div>
-  </body>
-  <script>
-	// Code taken and modified from: https://codepen.io/VividD/pen/bNgGKP
-	var board =[];
-	var firstView, secondView, thirdView, fourthView;
-	var posChar = ["h","g","f","e","d","c","b","a"]
-	var count = 8;
-	var factor = 2;
-	var tempCount = 8;
-	var lastChar = "a";
-	var colCount = 1;
-	var pieceCount = 0;
-	var index = 0;
-	var div;
-	var svg;
-	var selected;
-	var selectedText;
-	var dy = 35;
-	var dx = 20;
-	var piece;
-	var marginTop = 30,
+<style>
+    .container1 {
+        float: left;
+    }
+
+    .container2 {
+        float: right;
+    }
+
+    .container1.5 {
+        margin-right: auto;
+        margin-left: auto;
+    }
+</style>
+<head>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+</head>
+<body>
+    <div class="container1" id="chart1"></div>
+    <div class="container1.5" id="centerArea"></div>
+    <div class="container2" id="chart2"></div>
+</body>
+<script>
+    // Code taken and modified from: https://codepen.io/VividD/pen/bNgGKP
+    var board = [];
+    var firstView, secondView, thirdView, fourthView;
+    var posChar = ["h", "g", "f", "e", "d", "c", "b", "a"]
+    var count = 8;
+    var factor = 2;
+    var tempCount = 8;
+    var lastChar = "a";
+    var colCount = 1;
+    var pieceCount = 0;
+    var index = 0;
+    var div;
+    var svg;
+    var selected;
+    var selectedText;
+    var dy = 35;
+    var dx = 20;
+    var piece;
+    var marginTop = 30,
         marginLeft = 30,
         fieldSize = 40 * factor,
         boardDimension = 8,
-        boardSize = boardDimension*fieldSize;
-		
-	
-	parseJson();
-	makeChessBoard();
-	setUpMutiWindow();
-	function makeChessBoard(){
-		
-    for(var i = 0; i < boardDimension*boardDimension; i++) {
-        board.push({
-            x: i % boardDimension,
-            y: Math.floor(i / boardDimension),
-            piece: 0
+        boardSize = boardDimension * fieldSize;
+
+
+    parseJson();
+    makeChessBoard();
+    setUpMutiWindow();
+    function makeChessBoard() {
+
+        for (var i = 0; i < boardDimension * boardDimension; i++) {
+            board.push({
+                x: i % boardDimension,
+                y: Math.floor(i / boardDimension),
+                piece: 0
+            });
+        };
+
+        div = d3.select("#chart1")
+            .style("height", ((fieldSize * fieldSize) / 10) + "px")
+            .style("width", ((fieldSize * fieldSize) / 10) + "px")
+            .append("div");
+
+
+            svg = div.append("svg")
+                .attr("width", boardSize + "px")
+                .attr("height", boardSize + "px")
+                .append("g");
+
+        svg.selectAll("rect")
+            .data(board)
+            .enter()
+            .append("rect")
+            .attr("id",
+                function () {
+                    count--;
+                    var tCount = count;
+                    var tCol = tempCount;
+                    if (count == 0) {
+                        tempCount--;
+                        count = 8;
+                    }
+                    return posChar[tCount] + (tCol);
+                })
+            .attr("x", function (d) {
+                return d.x * fieldSize;
+            })
+            .attr("y", function (d) {
+                return d.y * fieldSize;
+            })
+            .attr("width", fieldSize + "px")
+            .attr("height", fieldSize + "px")
+            .style("fill", function (d) {
+                if (((d.x % 2 == 0) && (d.y % 2 == 0)) ||
+                    ((d.x % 2 == 1) && (d.y % 2 == 1)))
+                    return "beige";
+                else
+                    return "tan";
+            })
+            .on("click", function () {
+                var dx = d3.select(this).attr("x");
+                var dy = d3.select(this).attr("y");
+                findandSetNewPiece(selected, d3.select(this).attr("id"))
+                var thisPiece = d3.select("#" + selected);
+                var thisPieceX = d3.select("#" + selectedText).attr("x", (20 * factor));
+                var thisPieceY = d3.select("#" + selectedText).attr("y", (30 * factor));
+                thisPiece.attr("transform", "translate(" + (dx) + ", " + (dy) + ")");
+            });
+
+        var chessPiece = svg.selectAll("text")
+            .data(piece)
+            .enter()
+            .append("g")
+            .attr("id", function (d) {
+                var dy = d3.select("#" + d.p).attr("y");
+                var dx = d3.select("#" + d.p).attr("x");
+                board.forEach(function (i) {
+                    if ((i.x * fieldSize) == dx && (i.y * fieldSize) == dy) {
+                        i.piece = d.n;
+                    }
+                })
+                return d.n;
+            })
+            .attr("transform", "translate(0,0)")
+            .on("click", function () { selected = d3.select(this).attr("id") });
+
+        chessPiece.append("text")
+            .style("font-size", function () { return (30 * factor); })
+            .attr("id", function (d) { return "text" + d.n; })
+            .attr("text-anchor", "middle")
+            .text(function (d) { return d.c; })
+            .attr("y", function (d) { return +d3.select("#" + d.p).attr("y") + (30 * factor) })
+            .attr("x", function (d) { return +d3.select("#" + d.p).attr("x") + (20 * factor); })
+            .on("click", function () { selectedText = d3.select(this).attr("id") });
+    }
+
+    function findandSetNewPiece(pieceName, newLoc) {
+        piece.forEach(function (i) {
+            if (pieceName == i.n) {
+                i.p = newLoc
+            }
+        })
+    }
+
+    //TODO: Parse json to place pieces
+    function parseJson() {
+        piece = [{ n: "bRook1", p: "a8", c: "\u265C" },
+        { n: "bKnight1", p: "b8", c: "\u265E" }, { n: "bBishop1", p: "c8", c: "\u265D" },
+        { n: "bKing", p: "d8", c: "\u265A" }, { n: "bQueen", p: "e8", c: "\u265B" },
+        { n: "bBishop2", p: "f8", c: "\u265D" }, { n: "bKnight2", p: "g8", c: "\u265E" },
+        { n: "bRook2", p: "h8", c: "\u265C" }, { n: "bPawn1", p: "a7", c: "\u265F" },
+        { n: "bPawn2", p: "b7", c: "\u265F" }, { n: "bPawn3", p: "c7", c: "\u265F" },
+        { n: "bPawn4", p: "d7", c: "\u265F" }, { n: "bPawn5", p: "e7", c: "\u265F" },
+        { n: "bPawn6", p: "f7", c: "\u265F" }, { n: "bPawn7", p: "g7", c: "\u265F" },
+        { n: "bPawn8", p: "h7", c: "\u265F" },
+        { n: "wPawn1", p: "a2", c: "\u2659" }, { n: "wPawn2", p: "b2", c: "\u2659" },
+        { n: "wPawn3", p: "c2", c: "\u2659" }, { n: "wPawn4", p: "d2", c: "\u2659" },
+        { n: "wPawn5", p: "e2", c: "\u2659" }, { n: "wPawn6", p: "f2", c: "\u2659" },
+        { n: "wPawn7", p: "g2", c: "\u2659" }, { n: "wPawn8", p: "h2", c: "\u2659" },
+        { n: "wRook1", p: "a1", c: "\u2656" },
+        { n: "wKnight1", p: "b1", c: "\u2658" }, { n: "wBishop1", p: "c1", c: "\u2657" },
+        { n: "wKing", p: "d1", c: "\u2654" }, { n: "wQueen", p: "e1", c: "\u2655" },
+        { n: "wBishop2", p: "f1", c: "\u2657" }, { n: "wKnight2", p: "g1", c: "\u2658" },
+        { n: "wRook2", p: "h1", c: "\u2656" }];
+
+    }
+
+    var nextMove = [{ m: "C2", bw: 15, ww: 80, t: 5 }, { m: "D2", bw: 33, ww: 33, t: 33 }, { m: "D8", bw: 5, ww: 75, t: 20 }];
+
+    function updateBoard() {
+
+    }
+    function setUpMutiWindow() {
+
+        var infoView = d3.select("#chart2")
+            .style("height", ((fieldSize * fieldSize) / 10) + "px")
+            .style("width", ((fieldSize * fieldSize) / 10 + 120) + "px")
+            .style("margin-right", "100px")
+            .style("background-color", "lightgrey")
+            .append("svg")
+            .attr("height", ((fieldSize * fieldSize) / 10))
+            .attr("width", ((fieldSize * fieldSize) / 10 + 120));
+
+
+        firstView = infoView.append("g");
+        firstView.append("rect")
+            .attr("id", "firstView")
+            .attr("fill", "white")
+            .attr("height", ((fieldSize * fieldSize) / 40))
+            .attr("width", ((fieldSize * fieldSize) / 8.7))
+            .attr("transform", "translate(12, 14)");
+
+        secondView = infoView.append("g");
+        secondView.append("rect")
+            .attr("id", "secondView")
+            .attr("fill", "white")
+            .attr("height", ((fieldSize * fieldSize) / 30))
+            .attr("width", ((fieldSize * fieldSize) / 8.7))
+            .attr("transform", "translate(12, 184)");
+
+        thirdView = infoView.append("g");
+        thirdView.append("rect")
+            .attr("id", "thirdView")
+            .attr("fill", "white")
+            .attr("height", ((fieldSize * fieldSize) / 30))
+            .attr("width", ((fieldSize * fieldSize) / 18))
+            .attr("transform", "translate(12, 409)");
+
+        fourthView = infoView.append("g");
+        fourthView.append("rect")
+            .attr("id", "fourthView")
+            .attr("fill", "white")
+            .attr("height", ((fieldSize * fieldSize) / 30))
+            .attr("width", ((fieldSize * fieldSize) / 18))
+            .attr("transform", "translate(392, 409)");
+
+    }
+
+    var xScale = d3.scaleBand().range([0, 500]).padding(0.5);
+    var yScale = d3.scaleLinear().range([300, 0]);
+
+
+    createBarChart();
+    createPieChart();
+    //Side box stuff
+    function randNum(max, min) {
+        var value = Math.floor(Math.random() * (+max - +min)) + +min;
+        return value;
+    }
+    function createBarChart() {
+        //Zooms and pans
+
+        var domainData = [];
+        nextMove.forEach(function(i){
+            domainData.push(i.m);
+        })
+
+        xScale.domain(domainData);
+        yScale.domain([0, 150]);
+
+        var bar = secondView.append("g")
+            .attr("transform", "translate(150, 180)")
+
+        var bar = bar.selectAll("rect").data(nextMove)
+            .enter()
+            .append("rect")
+            .style("fill", "none")
+            .attr("stroke", "black")
+            .attr("id", function (d) { console.log(d.m); return d.m; })
+            .attr("x", function (d) { return xScale(d.m); })
+            .attr("y", function (d) { return yScale(d.bw) - 100; })
+            .attr('height', function (d) { return 300 - yScale(d.bw); })
+            .attr('width', xScale.bandwidth());
+
+    }
+
+    function createPieChart() {
+
+        var sampleData = [];
+        var loev = [];
+        domainData.forEach(function (i) {
+            var v = randNum(78, 6);
+            var total = 200;
+            while (loev.includes(v)) {
+                v = randNum(78, 6);
+            }
+            loev.push(v);
+            sampleData.push({ length: v, name: i, count: v, value: v, axis: i });
         });
-    };
 
-    div = d3.select("#chart1")
-		.style("height", ((fieldSize * fieldSize)/10) + "px")
-		.style("width", ((fieldSize * fieldSize)/10) + "px")
-        .append("div");
-        <!-- .style("position", "fixed") -->
-        <!-- .style("top", marginTop + "px") -->
-        <!-- .style("left", marginLeft + "px") -->
-        <!-- .style("width", boardSize + "px") -->
-        <!-- .style("height", boardSize + "px"); -->
+        var pie = d3.pie()
+            .value(function (d) { return d.count; })
+            .sort(null)
+            (sampleData);
 
-    svg = div.append("svg")
-         .attr("width", boardSize + "px")
-         .attr("height", boardSize + "px")
-         .append("g");
+        var arc = d3.arc()
+            .innerRadius(0)
+            .outerRadius(150);
 
-    svg.selectAll("rect")
-		 .data(board)
-		 .enter()
-		 .append("rect")
-         .attr("id", 
-		 function(){
-			count--;
-			var tCount = count;
-			var tCol = tempCount;
-			if(count == 0){
-				tempCount--;
-				count = 8;
-			}
-            return posChar[tCount] + (tCol);					 
-		 })
-         .attr("x", function (d) {
-             return d.x*fieldSize;
-         })
-         .attr("y", function (d) {
-             return d.y*fieldSize;
-         })
-         .attr("width", fieldSize + "px")
-         .attr("height", fieldSize + "px")
-         .style("fill", function (d) {
-             if ( ((d.x%2 == 0) && (d.y%2 == 0)) ||
-                  ((d.x%2 == 1) && (d.y%2 == 1))    ) 
-                 return "beige";
-             else
-                 return "tan";
-         })
-		 .on("click", function(){
-			var dx = d3.select(this).attr("x");
-			var dy = d3.select(this).attr("y");	
-			findandSetNewPiece(selected, d3.select(this).attr("id"))
-			var thisPiece = d3.select("#" + selected);
-			var thisPieceX = d3.select("#" + selectedText).attr("x", (20 * factor));
-			var thisPieceY = d3.select("#" + selectedText).attr("y", (30 * factor));
-			thisPiece.attr("transform", "translate(" + (dx) + ", " + (dy)+ ")");
-		 });
-
-    var chessPiece = svg.selectAll("text")
-		.data(piece)
-		.enter()
-		.append("g")
-		.attr("id", function(d){
-						var dy = d3.select("#" + d.p).attr("y");
-						var dx = d3.select("#" + d.p).attr("x");
-						board.forEach(function(i){
-							if((i.x * fieldSize) == dx && (i.y * fieldSize) == dy){
-								i.piece = d.n;
-							}
-						})
-						return d.n;})
-		.attr("transform", "translate(0,0)")
-		.on("click", function(){selected = d3.select(this).attr("id")});
-		
-	chessPiece.append("text")
-        .style("font-size", function(){return (30 * factor);})
-		.attr("id", function(d){return "text" + d.n;})
-        .attr("text-anchor", "middle")
-        .text(function(d){return d.c;})
-		.attr("y", function(d){return +d3.select("#" + d.p).attr("y") + (30 * factor)})
-        .attr("x", function(d){return +d3.select("#" + d.p).attr("x") + (20 * factor);})
-		.on("click", function(){selectedText = d3.select(this).attr("id")});
-	}
-				
-	function findandSetNewPiece(pieceName, newLoc){
-		piece.forEach(function(i){
-			if(pieceName == i.n){
-				i.p = newLoc
-			}
-		})
-	}
-	
-	//TODO: Parse json to place pieces
-	function parseJson(){
-	piece = [{n:"bRook1", p: "a8",c:"\u265C"},
-		{n:"bKnight1", p: "b8",c:"\u265E"},{n:"bBishop1", p: "c8",c:"\u265D"},
-		{n:"bKing", p: "d8",c:"\u265A"},{n:"bQueen", p: "e8",c:"\u265B"},
-		{n:"bBishop2", p: "f8",c:"\u265D"},{n:"bKnight2", p: "g8",c:"\u265E"},
-		{n:"bRook2", p: "h8",c:"\u265C"},{n:"bPawn1", p: "a7",c:"\u265F"},
-		{n:"bPawn2", p: "b7",c:"\u265F"},{n:"bPawn3", p: "c7",c:"\u265F"},
-		{n:"bPawn4", p: "d7",c:"\u265F"},{n:"bPawn5", p: "e7",c:"\u265F"},
-		{n:"bPawn6", p: "f7",c:"\u265F"},{n:"bPawn7", p: "g7",c:"\u265F"},
-		{n:"bPawn8", p: "h7",c:"\u265F"},
-		{n:"wPawn1", p: "a2",c:"\u2659"},{n:"wPawn2", p: "b2",c:"\u2659"},
-		{n:"wPawn3", p: "c2",c:"\u2659"},{n:"wPawn4", p: "d2",c:"\u2659"},
-		{n:"wPawn5", p: "e2",c:"\u2659"},{n:"wPawn6", p: "f2",c:"\u2659"},
-		{n:"wPawn7", p: "g2",c:"\u2659"},{n:"wPawn8", p: "h2",c:"\u2659"},
-		{n:"wRook1", p: "a1", c:"\u2656"},
-		{n:"wKnight1", p: "b1",c:"\u2658"},{n:"wBishop1", p: "c1",c:"\u2657"},
-		{n:"wKing", p: "d1",c:"\u2654"},{n:"wQueen", p: "e1",c:"\u2655"},
-		{n:"wBishop2", p: "f1",c:"\u2657"},{n:"wKnight2", p: "g1",c:"\u2658"},
-		{n:"wRook2", p: "h1",c:"\u2656"}];
-		
-	}
-    
-	function updateBoard(){
-		
-	}
-	function setUpMutiWindow(){
-		
-	var infoView = d3.select("#chart2")
-					 .style("height", ((fieldSize * fieldSize)/10) + "px")
-					 .style("width", ((fieldSize * fieldSize)/10 + 120) + "px")
-				     .style("margin-right", "100px")
-					 .style("background-color", "lightgrey")
-					 .append("svg")
-					 .attr("height", ((fieldSize * fieldSize)/10))
-					 .attr("width", ((fieldSize * fieldSize)/10 + 120));
-	
-	
-	firstView = infoView.append("g");
-	firstView.append("rect")
-			 .attr("id", "firstView")
-			 .attr("fill", "white")
-		     .attr("height", ((fieldSize * fieldSize)/40))
-			 .attr("width", ((fieldSize * fieldSize)/8.7))
-			 .attr("transform", "translate(12, 14)");
-					 
-	secondView = infoView.append("g");
-	secondView.append("rect")
-			  .attr("id", "secondView")
-			  .attr("fill", "white")
-			  .attr("height", ((fieldSize * fieldSize)/30))
-			  .attr("width", ((fieldSize * fieldSize)/8.7))
-			  .attr("transform", "translate(12, 184)");
-					  
-	thirdView = infoView.append("g");
-	thirdView.append("rect")
-			 .attr("id", "thirdView")
-			 .attr("fill", "white")
-			 .attr("height", ((fieldSize * fieldSize)/30))
-			 .attr("width", ((fieldSize * fieldSize)/18))
-			 .attr("transform", "translate(12, 409)");
-	
-    fourthView = infoView.append("g");
-	fourthView.append("rect")
-			 .attr("id", "fourthView")
-			 .attr("fill", "white")
-			 .attr("height", ((fieldSize * fieldSize)/30))
-			 .attr("width", ((fieldSize * fieldSize)/18))
-			 .attr("transform", "translate(392, 409)");	
-					  
-      }
+        var piechart = thirdView.append("g")
+            .attr("transform", "translate(120, 580)")
 
 
-      var domainData = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"];
-      var xScale = d3.scaleBand().range([0, 500]).padding(0.5);
-      var yScale = d3.scaleLinear().range([300, 0]);
+        var piecharts = piechart.selectAll("path")
+            .data(pie)
+            .enter()
+            .append("path")
+            .attr("d", arc)
+            //.attr("transform", "translate(300, 250)")
+            .attr("id", function (i) { return i.data.name; })
+            .attr("stroke", "black")
+            .attr("fill", function () {
+                return "none";
+            });
 
-
-      createBarChart();
-      createPieChart();
-      //Side box stuff
-      function randNum(max, min) {
-          var value = Math.floor(Math.random() * (+max - +min)) + +min;
-          return value;
-      }
-      function createBarChart() {
-          //Zooms and pans
-
-
-
-
-
-          var sampleData = [];
-          var loev = [];
-          domainData.forEach(function (i) {
-              var v = randNum(78, 6);
-              var total = 200;
-              while (loev.includes(v)) {
-                  v = randNum(78, 6);
-              }
-              loev.push(v);
-              sampleData.push({ length: v, name: i, count: v, value: v, axis: i });
-          });
-
-
-          xScale.domain(domainData);
-          yScale.domain([0, 150]);
-
-          var bar = secondView.append("g")
-                              .attr("transform" , "translate(150, 180)")
-
-          var bar = bar.selectAll("rect").data(sampleData)
-              .enter()
-              .append("rect")
-              .style("fill", "none")
-              .attr("stroke", "black")
-              .attr("id", function (d) { return d.name; })
-              .attr("x", function (d) { return xScale(d.name); })
-              .attr("y", function (d) { return yScale(d.count) - 100; })
-              .attr('height', function (d) { return 300 - yScale(d.count); })
-              .attr('width', xScale.bandwidth());
-
-      }
-
-      function createPieChart() {
-
-          var sampleData = [];
-          var loev = [];
-          domainData.forEach(function (i) {
-              var v = randNum(78, 6);
-              var total = 200;
-              while (loev.includes(v)) {
-                  v = randNum(78, 6);
-              }
-              loev.push(v);
-              sampleData.push({ length: v, name: i, count: v, value: v, axis: i });
-          });
-
-          var pie = d3.pie()
-              .value(function (d) { return d.count; })
-              .sort(null)
-              (sampleData);
-
-          var arc = d3.arc()
-              .innerRadius(0)
-              .outerRadius(150);
-
-          var piechart = thirdView.append("g")
-              .attr("transform", "translate(120, 580)")
-
-
-          var piecharts = piechart.selectAll("path")
-              .data(pie)
-              .enter()
-              .append("path")
-              .attr("d", arc)
-              //.attr("transform", "translate(300, 250)")
-              .attr("id", function (i) { return i.data.name; })
-              .attr("stroke", "black")
-              .attr("fill", function () {
-                  return "none";
-              });
-
-      }
-	</script>
+    }
+</script>
 </html>
