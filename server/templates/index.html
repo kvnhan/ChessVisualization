@@ -26,10 +26,10 @@
     // Code taken and modified from: https://codepen.io/VividD/pen/bNgGKP
     var board = [];
     var colorScale = d3.scaleOrdinal(d3.schemeCategory10);
-    var domainData = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"];
+    var domainData = ["A", "B", "C", "d", "E", "F", "G", "H", "I", "J"];
     var nextMove = [{ m: "D2", bw: 33, ww: 40, t: 33 }, { m: "C2", bw: 15, ww: 80, t: 5 }, { m: "D8", bw: 5, ww: 75, t: 20 }];
     var firstView, secondView, thirdView, fourthView;
-    var posChar = ["h", "g", "f", "e", "d", "c", "b", "a"]
+    var posChar = ["H", "G", "F", "E", "D", "C", "B", "A"]
     var count = 8;
     var factor = 2;
     var tempCount = 8;
@@ -152,24 +152,24 @@
 
     //TODO: Parse json to place pieces
     function parseJson() {
-        piece = [{ n: "bRook1", p: "a8", c: "\u265C" },
-        { n: "bKnight1", p: "b8", c: "\u265E" }, { n: "bBishop1", p: "c8", c: "\u265D" },
-        { n: "bKing", p: "d8", c: "\u265A" }, { n: "bQueen", p: "e8", c: "\u265B" },
-        { n: "bBishop2", p: "f8", c: "\u265D" }, { n: "bKnight2", p: "g8", c: "\u265E" },
-        { n: "bRook2", p: "h8", c: "\u265C" }, { n: "bPawn1", p: "a7", c: "\u265F" },
-        { n: "bPawn2", p: "b7", c: "\u265F" }, { n: "bPawn3", p: "c7", c: "\u265F" },
-        { n: "bPawn4", p: "d7", c: "\u265F" }, { n: "bPawn5", p: "e7", c: "\u265F" },
-        { n: "bPawn6", p: "f7", c: "\u265F" }, { n: "bPawn7", p: "g7", c: "\u265F" },
-        { n: "bPawn8", p: "h7", c: "\u265F" },
-        { n: "wPawn1", p: "a2", c: "\u2659" }, { n: "wPawn2", p: "b2", c: "\u2659" },
-        { n: "wPawn3", p: "c2", c: "\u2659" }, { n: "wPawn4", p: "d2", c: "\u2659" },
-        { n: "wPawn5", p: "e2", c: "\u2659" }, { n: "wPawn6", p: "f2", c: "\u2659" },
-        { n: "wPawn7", p: "g2", c: "\u2659" }, { n: "wPawn8", p: "h2", c: "\u2659" },
-        { n: "wRook1", p: "a1", c: "\u2656" },
-        { n: "wKnight1", p: "b1", c: "\u2658" }, { n: "wBishop1", p: "c1", c: "\u2657" },
-        { n: "wKing", p: "d1", c: "\u2654" }, { n: "wQueen", p: "e1", c: "\u2655" },
-        { n: "wBishop2", p: "f1", c: "\u2657" }, { n: "wKnight2", p: "g1", c: "\u2658" },
-        { n: "wRook2", p: "h1", c: "\u2656" }];
+        piece = [{ n: "bRook1", p: "A8", c: "\u265C" },
+        { n: "bKnight1", p: "B8", c: "\u265E" }, { n: "bBishop1", p: "C8", c: "\u265D" },
+        { n: "bKing", p: "D8", c: "\u265A" }, { n: "bQueen", p: "E8", c: "\u265B" },
+        { n: "bBishop2", p: "F8", c: "\u265D" }, { n: "bKnight2", p: "G8", c: "\u265E" },
+        { n: "bRook2", p: "H8", c: "\u265C" }, { n: "bPawn1", p: "A7", c: "\u265F" },
+        { n: "bPawn2", p: "B7", c: "\u265F" }, { n: "bPawn3", p: "C7", c: "\u265F" },
+        { n: "bPawn4", p: "D7", c: "\u265F" }, { n: "bPawn5", p: "E7", c: "\u265F" },
+        { n: "bPawn6", p: "F7", c: "\u265F" }, { n: "bPawn7", p: "G7", c: "\u265F" },
+        { n: "bPawn8", p: "H7", c: "\u265F" },
+        { n: "wPawn1", p: "A2", c: "\u2659" }, { n: "wPawn2", p: "B2", c: "\u2659" },
+        { n: "wPawn3", p: "C2", c: "\u2659" }, { n: "wPawn4", p: "D2", c: "\u2659" },
+        { n: "wPawn5", p: "E2", c: "\u2659" }, { n: "wPawn6", p: "F2", c: "\u2659" },
+        { n: "wPawn7", p: "G2", c: "\u2659" }, { n: "wPawn8", p: "H2", c: "\u2659" },
+        { n: "wRook1", p: "A1", c: "\u2656" },
+        { n: "wKnight1", p: "B1", c: "\u2658" }, { n: "wBishop1", p: "C1", c: "\u2657" },
+        { n: "wKing", p: "D1", c: "\u2654" }, { n: "wQueen", p: "E1", c: "\u2655" },
+        { n: "wBishop2", p: "F1", c: "\u2657" }, { n: "wKnight2", p: "G1", c: "\u2658" },
+        { n: "wRook2", p: "H1", c: "\u2656" }];
 
     }
 
