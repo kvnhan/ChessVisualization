@@ -55,6 +55,7 @@
     var div;
     var svg;
     var selected;
+	var selectedPiece;
     var selectedText;
     var dy = 35;
     var dx = 20;
@@ -147,7 +148,7 @@
                 var dx = d3.select(this).attr("x");
                 var dy = d3.select(this).attr("y");
                 findandSetNewPiece(selected, d3.select(this).attr("id"))
-                var thisPiece = d3.select("#" + selected);
+                var thisPiece = d3.select("." + selected);
                 var thisPieceX = d3.select("#" + selectedText).attr("x", (20 * factor));
                 var thisPieceY = d3.select("#" + selectedText).attr("y", (30 * factor));
                 thisPiece.attr("transform", "translate(" + (dx) + ", " + (dy) + ")");
@@ -157,7 +158,7 @@
             .data(piece)
             .enter()
             .append("g")
-            .attr("id", function (d) {
+            .attr("class", function (d) {
                 var dy = d3.select("#" + d.p).attr("y");
                 var dx = d3.select("#" + d.p).attr("x");
                 board.forEach(function (i) {
@@ -168,18 +169,44 @@
                 return d.n;
             })
             .attr("transform", "translate(0,0)")
-            .on("click", function () { selected = d3.select(this).attr("id") });
+            .on("click", function () { selected = d3.select(this).attr("class") });
 
         chessPiece.append("text")
             .style("font-size", function () { return (30 * factor); })
-            .attr("id", function (d) { return "text" + d.n; })
+            .attr("id", function (d) { return d.n; })
             .attr("text-anchor", "middle")
             .text(function (d) { return d.c; })
             .attr("y", function (d) { return +d3.select("#" + d.p).attr("y") + (30 * factor) })
             .attr("x", function (d) { return +d3.select("#" + d.p).attr("x") + (20 * factor); })
-            .on("click", function () { selectedText = d3.select(this).attr("id") });
+            .on("click", function () {
+				selectedText = d3.select(this).attr("id");
+				getPiece(selectedText);
+				})
+			.on("mouseover", function () {
+				selectedText = d3.select(this).attr("id");
+				getPiece(selectedText);
+				})
+			.on("mouseout", function () {
+				selectedPiece = "None";
+				updateMoveText("")
+				});
     }
 
+	function findPiece(pieceName){
+		piece.forEach(function (i) {
+            if (pieceName == i.n) {
+                return i.p;
+            }
+        })
+	}
+	
+	function getPiece(pieceName){
+		piece.forEach(function (i) {
+            if (pieceName == i.n) {
+                updateMoveText(i.c);
+            }
+        })
+	}
     function findandSetNewPiece(pieceName, newLoc) {
         piece.forEach(function (i) {
             if (pieceName == i.n) {
@@ -187,6 +214,40 @@
             }
         })
     }
+	
+	function updateMoveText(s){
+		d3.select("#pp").text(s);
+	}
+	
+	setMoveText();
+	function setMoveText(){
+		var view =  d3.select("#thirdandhalfView").append("svg")
+												  .attr("id", "pieceView")
+		                                          .attr("height", ((fieldSize * fieldSize) / 40))
+												  .attr("width", ((fieldSize * fieldSize) / 18));
+		var textMove = view.append("text")
+						   .attr("id", "moveText")
+						   .attr("font-size", 18)
+		                   .attr("transform", "translate(30, 30)")
+						   .text("Current Piece");
+						   
+		var moveBox = view.append("rect")
+						  .attr("id", "pieceBox")
+		                  .attr("height", 70)
+						  .attr("width", 70)
+						  .attr("x", 40)
+						  .attr("y", 50)
+						  .attr("fill", "lightgrey")
+						  .attr("opacity", 0.7);
+						  
+		var pieceBox = view.append("text")
+						   .attr("x", function () { return +d3.select("#pieceBox").attr("x") + 35})
+						   .attr("y", function () { return +d3.select("#pieceBox").attr("y") + 55})
+						   .attr("text-anchor", "middle")
+						   .attr("id", "pp")
+						   .attr("font-size", 60)
+						   .text("");
+	}
     function setUpMutiWindow() {
 
         var infoView = d3.select("#chart2")
@@ -385,7 +446,6 @@
 						 .append("td")
 						 .text(function(d){return d;});
 	}
-	//testFunction();
 	
 	function testFunction(d){
 	
