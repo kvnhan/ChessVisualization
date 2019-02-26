@@ -69,6 +69,8 @@
     parseJson();
     makeChessBoard();
     setUpMutiWindow();
+	setMoveText();
+	historyTable();
 	createBarChart();
 	createPieChart();
     function parseJson() {
@@ -211,7 +213,10 @@
 		d3.select("#pp").text(s);
 	}
 	
-	setMoveText();
+	function updateMoveList(){
+		
+	}
+	
 	function setMoveText(){
 		var v =  d3.select("#thirdandhalfView").append("div")
 		                                       .style("height", ((fieldSize * fieldSize) / 40) + "px")
@@ -222,7 +227,7 @@
 		            .attr("height", ((fieldSize * fieldSize) / 40))
 					.attr("width", ((fieldSize * fieldSize) / 36));
 					
-		var test =  d3.select("#thirdandhalfView").append("div")
+		var listView =  d3.select("#thirdandhalfView").append("div")
 		                                          .style("height", ((fieldSize * fieldSize) / 40) + "px")
 												  .style("width", ((fieldSize * fieldSize) / 36) + "px")
 											      .style("float", "right");
@@ -237,6 +242,7 @@
 		                  .attr("height", 70)
 						  .attr("width", 70)
 						  .attr("x", 40)
+						  .attr("stroke", "black")
 						  .attr("y", 50)
 						  .attr("fill", "lightgrey")
 						  .attr("opacity", 0.4);
@@ -248,6 +254,19 @@
 						   .attr("id", "pp")
 						   .attr("font-size", 60)
 						   .text("");
+						   
+		var lom = listView.append("p")
+		                  .attr("id", "moveText")
+						  .style("font-size", "110%")
+		                  .style("margin-top", "14px")
+						  .style("margin-right", "1px")
+						  .text("List of Next Moves");
+		var listBox = listView.append("div")
+		                      .style("width", ((fieldSize * fieldSize) / 36) + "px")
+							  .attr("id", "listBox")
+							  .style("height", "68%")
+							  .style("word-wrap", "break-word")
+							  .style("overflow-y", "auto")
 	}
     function setUpMutiWindow() {
 
@@ -410,9 +429,7 @@
             });
 		piecharts.attr("transform", "translate(175, 110)")
     }	
-	
-	historyTable();
-	
+		
 	function historyTable(){
 		var sample = [[1,2,2,3],[1,2,2,3],[1,2,2,3],[1,2,2,3],[2,3,4,5],[2,3,4,5],[2,3,4,5],[2,3,4,5],[2,3,4,5],[2,3,4,5],[6,6,7,4],[9,0,8,6],[1,1,1,1],[1,9,9,6]];
 		var table = d3.select("#fourthView").append("table")
