@@ -3,11 +3,11 @@ import os.path
 import random
 import string
 import os 
-import makeTree
+#import makeTree
 
 app = Flask(__name__, static_url_path='')
 
-#@app.route("/")
+@app.route("/")
 def index():
     return render_template('index.html')
 
