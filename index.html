@@ -16,7 +16,7 @@
 	
 	#fourthView th div{
 		position: absolute;
-		margin-top: -30px;
+		margin-top: -31px;
 		background-color: white;
 	}
 	
@@ -196,27 +196,38 @@
             .style("background-color", "lightgrey")
 		
 		var firstView = infoView.append("div")
-		                        .style("height", ((fieldSize * fieldSize) / 40) + "px")
-                                .style("width", ((fieldSize * fieldSize) / 8.7) + "px")
+		                        .style("height", ((fieldSize * fieldSize) / 30) + "px")
+                                .style("width", ((fieldSize * fieldSize) / 18) + "px")
 								.attr("id", "firstView")
 								.style("background-color", "white")
 								.style("margin-left", "13px")
 								.style("border-radius", "25px")
-								.style("margin-top", "13px");
+								.style("margin-top", "13px")
+								.style("float", "left");
 								
 		var secondView = infoView.append("div")
 		                        .style("height", ((fieldSize * fieldSize) / 30) + "px")
-                                .style("width", ((fieldSize * fieldSize) / 8.7) + "px")
+                                .style("width", ((fieldSize * fieldSize) / 18) + "px")
 								.attr("id", "secondView")
 								.style("background-color", "white")
 								.style("border-radius", "25px")
-								.style("margin-left", "13px")
-								.style("margin-top", "13px");
+								.style("margin-right", "13px")
+								.style("margin-top", "13px")
+								.style("float", "right");
 								
 		var thirdView = infoView.append("div")
 		                        .style("height", ((fieldSize * fieldSize) / 30) + "px")
-                                .style("width", ((fieldSize * fieldSize) / 18) + "px")
+                                .style("width", ((fieldSize * fieldSize) / 8.7) + "px")
 								.attr("id", "thirdView")
+								.style("background-color", "white")
+								.style("margin-left", "13px")
+								.style("border-radius", "25px")
+								.style("margin-top", "240px");
+		
+		var thirdandhalfView = infoView.append("div")
+		                        .style("height", ((fieldSize * fieldSize) / 40) + "px")
+                                .style("width", ((fieldSize * fieldSize) / 18) + "px")
+								.attr("id", "thirdandhalfView")
 								.style("background-color", "white")
 								.style("margin-left", "13px")
 								.style("border-radius", "25px")
@@ -224,25 +235,25 @@
 								.style("float", "left");
 								
 		var fourthView = infoView.append("div")
-		                        .style("height", ((fieldSize * fieldSize) / 30) + "px")
+		                        .style("height", ((fieldSize * fieldSize) / 40) + "px")
                                 .style("width", ((fieldSize * fieldSize) / 18) + "px")
 								.attr("id", "fourthView")
 								.style("background-color", "white")
 								.style("margin-right", "13px")
 								.style("margin-top", "13px")
 								.style("border-radius", "25px")
-								.style("float", "right")
-								.style("overflow", "auto");
+								.style("overflow", "auto")
+								.style("float", "right");
     }
     function randNum(max, min) {
         var value = Math.floor(Math.random() * (+max - +min)) + +min;
         return value;
     }
     function createBarChart() {
-        var secViewwidth = ((fieldSize * fieldSize) / 8.7) - 200;
+        var secViewwidth = ((fieldSize * fieldSize) / 18) - 200;
         var secViewheight = ((fieldSize * fieldSize) / 30) - 31;
-        var xScale = d3.scaleBand().range([0, 500]).padding(0.2);
-        var yScale = d3.scaleLinear().range([300, 120]);
+        var xScale = d3.scaleBand().range([0, secViewwidth + 100]).padding(0.2);
+        var yScale = d3.scaleLinear().range([300, secViewheight - 50]);
 
         var domainData = [];
         nextMove.forEach(function (i) {
@@ -257,14 +268,14 @@
         var svg = d3.select("#secondView").append("svg")
                                             .attr("class", "graph")
 											.attr("height", ((fieldSize * fieldSize) / 30))
-											.attr("width", ((fieldSize * fieldSize) / 8.7) )
+											.attr("width", ((fieldSize * fieldSize) / 18))
 		var graph = svg.append("g")
-                       .attr("transform", "translate(100, -5)");
+                       .attr("transform", "translate(50, -10)");
 
         graph.append("rect")
-            .attr("height", secViewheight)
-            .attr("width", secViewwidth)
-            .attr("transform", "translate(0, 20)")
+            .attr("height", secViewheight - 10)
+            .attr("width", secViewwidth + 100)
+            .attr("transform", "translate(0, 30)")
             .attr("fill", "lightgrey")
             .attr("opacity", 0.4);
 
@@ -277,7 +288,7 @@
             .attr("class", "grid")
             .attr("transform", "translate(0,-100)")
             .call(d3.axisLeft(yScale)
-                .tickSize(-secViewwidth))
+                .tickSize(-secViewwidth - 100))
 
 
         var bar = graph.selectAll("rect.m").data(nextMove)
@@ -318,7 +329,7 @@
             .innerRadius(0)
             .outerRadius(90);
 
-        var graph = d3.select("#thirdView").append("svg")
+        var graph = d3.select("#firstView").append("svg")
             .attr("class", "graph")
 			.attr("height", ((fieldSize * fieldSize) / 30))
 			.attr("width", ((fieldSize * fieldSize) / 18))
@@ -374,7 +385,7 @@
 						 .append("td")
 						 .text(function(d){return d;});
 	}
-	testFunction();
+	//testFunction();
 	
 	function testFunction(d){
 	
