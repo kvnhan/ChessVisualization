@@ -181,14 +181,6 @@
             .on("click", function () {
 				selectedText = d3.select(this).attr("id");
 				getPiece(selectedText);
-				})
-			.on("mouseover", function () {
-				selectedText = d3.select(this).attr("id");
-				getPiece(selectedText);
-				})
-			.on("mouseout", function () {
-				selectedPiece = "None";
-				updateMoveText("")
 				});
     }
 
@@ -221,10 +213,19 @@
 	
 	setMoveText();
 	function setMoveText(){
-		var view =  d3.select("#thirdandhalfView").append("svg")
-												  .attr("id", "pieceView")
-		                                          .attr("height", ((fieldSize * fieldSize) / 40))
-												  .attr("width", ((fieldSize * fieldSize) / 18));
+		var v =  d3.select("#thirdandhalfView").append("div")
+		                                       .style("height", ((fieldSize * fieldSize) / 40) + "px")
+											   .style("width", ((fieldSize * fieldSize) / 36) + "px")
+											   .style("float", "left");
+		
+		var view = v.append("svg")
+		            .attr("height", ((fieldSize * fieldSize) / 40))
+					.attr("width", ((fieldSize * fieldSize) / 36));
+					
+		var test =  d3.select("#thirdandhalfView").append("div")
+		                                          .style("height", ((fieldSize * fieldSize) / 40) + "px")
+												  .style("width", ((fieldSize * fieldSize) / 36) + "px")
+											      .style("float", "right");
 		var textMove = view.append("text")
 						   .attr("id", "moveText")
 						   .attr("font-size", 18)
@@ -238,7 +239,7 @@
 						  .attr("x", 40)
 						  .attr("y", 50)
 						  .attr("fill", "lightgrey")
-						  .attr("opacity", 0.7);
+						  .attr("opacity", 0.4);
 						  
 		var pieceBox = view.append("text")
 						   .attr("x", function () { return +d3.select("#pieceBox").attr("x") + 35})
