@@ -185,12 +185,12 @@
             .style("width", ((fieldSize * fieldSize) / 10 + 120) + "px")
             .style("margin-right", "100px")
             .style("background-color", "lightgrey")
-            .append("svg")
-            .attr("height", ((fieldSize * fieldSize) / 10))
-            .attr("width", ((fieldSize * fieldSize) / 10 + 120));
+        var  svg = infoView.append("svg")
+                           .attr("height", ((fieldSize * fieldSize) / 10))
+                           .attr("width", ((fieldSize * fieldSize) / 10 + 120));
 
 
-        firstView = infoView.append("g")
+        firstView = svg.append("g")
             .attr("transform", "translate(12, 14)");
         firstView.append("rect")
             .attr("id", "firstView")
@@ -199,7 +199,7 @@
             .attr("width", ((fieldSize * fieldSize) / 8.7));
 
 
-        secondView = infoView.append("g")
+        secondView = svg.append("g")
             .attr("transform", "translate(12, 184)");
         secondView.append("rect")
             .attr("id", "secondView")
@@ -207,21 +207,23 @@
             .attr("height", ((fieldSize * fieldSize) / 30))
             .attr("width", ((fieldSize * fieldSize) / 8.7));
 
-        thirdView = infoView.append("g")
+        thirdView = svg.append("g")
             .attr("transform", "translate(12, 409)");
         thirdView.append("rect")
             .attr("id", "thirdView")
             .attr("fill", "white")
             .attr("height", ((fieldSize * fieldSize) / 30))
-            .attr("width", ((fieldSize * fieldSize) / 18));
+            .attr("width", ((fieldSize * fieldSize) / 18))
+			.style("overflow", "auto");
 
-        fourthView = infoView.append("g")
+        fourthView = svg.append("g")
             .attr("transform", "translate(392, 409)");
         fourthView.append("rect")
             .attr("id", "fourthView")
             .attr("fill", "white")
             .attr("height", ((fieldSize * fieldSize) / 30))
-            .attr("width", ((fieldSize * fieldSize) / 18));
+            .attr("width", ((fieldSize * fieldSize) / 18))
+			.style("overflow", "auto");
 
     }
 
@@ -309,9 +311,11 @@
             .innerRadius(0)
             .outerRadius(90);
 
-        var graph = thirdView.append("g")
+        var graph = thirdView.append("svg")
             .attr("class", "graph")
-            .attr("transform", "translate(175, 110)");
+			.attr("height", ((fieldSize * fieldSize) / 30))
+			.attr("width", ((fieldSize * fieldSize) / 18))
+            <!-- .attr("transform", "translate(175, 110)"); -->
 
 
         var piecharts = graph.selectAll("path")
@@ -324,7 +328,7 @@
             .attr("fill", function (d, i) {
                 return colorScale(i);
             });
-
+		piecharts.attr("transform", "translate(175, 110)")
     }
 	
 	testFunction();
@@ -336,13 +340,13 @@
 							  .attr("width", 50)
 							  .attr("fill", "red")
 							  .attr("transform", "translate(20, 20)")
-							  .on("click", function(){testPostRq();})
-							  <!-- .on("click", function(){ -->
-								<!-- var dx = d3.select("#g3").attr("x") - (d3.select("#textbKnight2").attr("x") - (20 * factor)); -->
-								<!-- var dy = d3.select("#g3").attr("y") - (d3.select("#textbKnight2").attr("y") - (30 * factor)); -->
-								<!-- var dir = "translate(" + dx + ", " + dy + ")"  -->
-								<!-- d3.select("#bKnight2").transition(t).attr("transform", dir); -->
-							  <!-- }) -->
+							  <!-- .on("click", function(){testPostRq();}) -->
+							  .on("click", function(){
+								var dx = d3.select("#G3").attr("x") - (d3.select("#textbKnight2").attr("x") - (20 * factor));
+								var dy = d3.select("#G3").attr("y") - (d3.select("#textbKnight2").attr("y") - (30 * factor));
+								var dir = "translate(" + dx + ", " + dy + ")" 
+								d3.select("#bKnight2").transition(t).attr("transform", dir);
+							  })
 	}
 	
 	function testPostRq(){
