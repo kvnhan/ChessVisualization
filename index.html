@@ -326,5 +326,44 @@
             });
 
     }
+	
+	testFunction();
+	
+	function testFunction(d){
+	    var t = d3.transition().duration(3000);
+		var button = firstView.append("rect")
+		                      .attr("height", 50)
+							  .attr("width", 50)
+							  .attr("fill", "red")
+							  .attr("transform", "translate(20, 20)")
+							  .on("click", function(){testPostRq();})
+							  <!-- .on("click", function(){ -->
+								<!-- var dx = d3.select("#g3").attr("x") - (d3.select("#textbKnight2").attr("x") - (20 * factor)); -->
+								<!-- var dy = d3.select("#g3").attr("y") - (d3.select("#textbKnight2").attr("y") - (30 * factor)); -->
+								<!-- var dir = "translate(" + dx + ", " + dy + ")"  -->
+								<!-- d3.select("#bKnight2").transition(t).attr("transform", dir); -->
+							  <!-- }) -->
+	}
+	
+	function testPostRq(){
+        submitURL = "http://ashaji.dyn.wpi.edu:5000/getmoves"
+        var postReq = "Hello Server. Give me some moves";
+        console.log("JS of req:" + JSON.stringify(postReq));
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/submit", true);
+        xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+        console.log(submitURL);
+        xhr.send(JSON.stringify(postReq));
+        console.log(xhr);
+        xhr.onloadend = function () {
+            console.log(xhr);
+            if (xhr.readyState == XMLHttpRequest.DONE) {
+                console.log("XHR:" + xhr.responseText);
+                console.log(xhr.responseText);
+            } else {
+                alert("Did not get response, server is down?")
+            }
+        }
+	}
 </script>
 </html>
