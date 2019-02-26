@@ -13,6 +13,21 @@
         margin-right: auto;
         margin-left: auto;
     }
+	
+	#fourthView th div{
+		position: absolute;
+		margin-top: -30px;
+		background-color: white;
+	}
+	
+	#fourthView table { 
+		border-collapse: collapse; 
+	}
+	
+	#fourthView tbody { 
+		border-top: 5px solid transparent;
+	}
+	
 </style>
 <head>
     <script src="https://d3js.org/d3.v5.min.js"></script>
@@ -186,6 +201,7 @@
 								.attr("id", "firstView")
 								.style("background-color", "white")
 								.style("margin-left", "13px")
+								.style("border-radius", "25px")
 								.style("margin-top", "13px");
 								
 		var secondView = infoView.append("div")
@@ -193,6 +209,7 @@
                                 .style("width", ((fieldSize * fieldSize) / 8.7) + "px")
 								.attr("id", "secondView")
 								.style("background-color", "white")
+								.style("border-radius", "25px")
 								.style("margin-left", "13px")
 								.style("margin-top", "13px");
 								
@@ -202,6 +219,7 @@
 								.attr("id", "thirdView")
 								.style("background-color", "white")
 								.style("margin-left", "13px")
+								.style("border-radius", "25px")
 								.style("margin-top", "13px")
 								.style("float", "left");
 								
@@ -212,6 +230,7 @@
 								.style("background-color", "white")
 								.style("margin-right", "13px")
 								.style("margin-top", "13px")
+								.style("border-radius", "25px")
 								.style("float", "right")
 								.style("overflow", "auto");
     }
@@ -319,6 +338,42 @@
 		piecharts.attr("transform", "translate(175, 110)")
     }	
 	
+	historyTable();
+	
+	function historyTable(){
+		var sample = [[1,2,2,3],[1,2,2,3],[1,2,2,3],[1,2,2,3],[2,3,4,5],[2,3,4,5],[2,3,4,5],[2,3,4,5],[2,3,4,5],[2,3,4,5],[6,6,7,4],[9,0,8,6],[1,1,1,1],[1,9,9,6]];
+		var table = d3.select("#fourthView").append("table")
+		                                    .attr("id", "historyTable")
+											.style("width", "80%")
+											.style("margin-top", "30px")
+											.style("margin-left", "40px");
+											
+		var header = table.append("tr");
+		
+		var th = header.selectAll("th")
+			  .data(["Move", "Win%", "Lose%", "Tie%"])
+			  .enter()
+			  .append("th")
+			  .append("div")
+			  <!-- .style("border", "1px solid black") -->
+			  .style("text-align", "left")
+			  .style("padding", "6px")
+			  .text(function(d){return d;});
+			  
+		var bodyView = table.append("tbody");    
+		
+		var rows = bodyView.selectAll("tr")
+		                   .data(sample)
+						   .enter()
+						   .append("tr")
+						   .style("text-align", "center");
+						   
+		var values = rows.selectAll("td")
+						 .data(function(d){return d;})
+						 .enter()
+						 .append("td")
+						 .text(function(d){return d;});
+	}
 	testFunction();
 	
 	function testFunction(d){
