@@ -15,7 +15,7 @@ def index():
 def submit():
     if(request.method == 'POST'):
         print("I got a submission")
-        print("req" + str(request))
+        print("req" + str(request.get_json()))
         return  "Succesful submission"
     else:
         print("Not a post req")

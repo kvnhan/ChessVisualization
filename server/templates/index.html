@@ -234,7 +234,10 @@
 								  .style("border", "1px solid black")
 								  .style("border-radius", "5px")
 								  .text(function(d){return d;})
-								  .on("click", function(){ var d = d3.select(this).attr("id"); testPostRq(d);})
+								  .on("click", function(){ 
+                            /*TODO make this grab all moves*/
+                            var d = d3.select(this).attr("id"); getMoves(d);})
+                            
 								  .on("mouseover", function(d){d3.select(this).style("cursor", "pointer");
 								  d3.select(this).classed("selected", true);})
 								  .on("mouseout", function(d){d3.select(this).style("cursor", "default");
@@ -508,12 +511,14 @@
 							  })
 	}
 	
-	function testPostRq(d){
+	function getMoves(d){
+        d.push("a3")
         submitURL = "http://ashaji.dyn.wpi.edu:5000/getmoves"
-        var postReq = [d];
+        var postReq = {};
+        postReq["moves"] = d;
         console.log("JS of req:" + JSON.stringify(postReq));
         var xhr = new XMLHttpRequest();
-        xhr.open("POST", "/getmoves", true);
+        xhr.open("POST", submitURL, true);
         xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
         console.log(submitURL);
         xhr.send(JSON.stringify(postReq));
