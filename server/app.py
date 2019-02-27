@@ -3,7 +3,7 @@ import os.path
 import random
 import string
 import os 
-#import makeTree
+import makeTree
 
 app = Flask(__name__, static_url_path='')
 
@@ -20,16 +20,14 @@ def submit():
         print("req" + str(request.get_json()))
         print(req["moves"][0])
         
-        temp = origin
+        temp = makeTree.origin
 
         for move in req["moves"]:
-            if(containsMove(temp,move)):
-                temp = getMove(temp,move)
-                return(formatReturn(temp))
+            if(makeTree.containsMove(temp,move)):
+                temp = makeTree.getMove(temp,move)
             else:
                 return "404, tree not found"
-
-        return  "Succesful submission"
+        return(str(makeTree.formatReturn(temp)))
     else:
         print("Not a post req")
     return "NOTAVALIDPATH"

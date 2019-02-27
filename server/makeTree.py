@@ -18,6 +18,15 @@ class moveTree:
         print("Num Instances = ", self.numInstances)
         print("Moves size = ", len(self.moves))
 
+    def getValues(self):
+        ret = {}
+        ret["name"] = self.name
+        ret["whiteW"] = self.blackW
+        ret["blackW"] = self.whiteW
+        ret["draws"] = self.draws
+        ret["numInstances"] = self.numInstances
+        return ret
+
     def getStatistics(self):
         r = {}
         print("TODO") #TODO
@@ -94,8 +103,13 @@ def readGame(moveSet):
         addGame(mvList, origin, result)
 
 def formatReturn(move):
-    move.printValues()
-    return "Looks like a valid set";
+    ret = {}
+    ret["move"] = move.getValues()
+    potMoves = []
+    for m in move.moves:
+        potMoves.append(m.getValues())
+    ret["potMoves"] = potMoves
+    return ret;
     
 
 origin = moveTree()
@@ -118,3 +132,4 @@ for filename in glob.glob('parsing/data/*.pgn'):
             readGame(f)
 
 origin.printValues()
+
