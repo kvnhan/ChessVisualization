@@ -11,10 +11,12 @@ app = Flask(__name__, static_url_path='')
 def index():
     return render_template('index.html')
 
+
 @app.route("/getmoves",methods=['POST'])
 def submit():
     if(request.method == 'POST'):
         print("I got a submission")
+        req = request.get_json()
         print("req" + str(request.get_json()))
         return  "Succesful submission"
     else:

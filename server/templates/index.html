@@ -41,7 +41,8 @@
     <div class="container2" id="chart2"></div>
 </body>
 <script>
-    
+   
+    var url = "http://ashaji.dyn.wpi.edu:5000"
     var board = [];
     var colorScale = d3.scaleOrdinal(d3.schemeCategory10);
     var domainData = ["A", "B", "C", "d", "E", "F", "G", "H", "I", "J"];
@@ -512,8 +513,7 @@
 	}
 	
 	function getMoves(d){
-        d.push("a3")
-        submitURL = "http://ashaji.dyn.wpi.edu:5000/getmoves"
+        submitURL = url + "/getmoves"
         var postReq = {};
         postReq["moves"] = d;
         console.log("JS of req:" + JSON.stringify(postReq));
