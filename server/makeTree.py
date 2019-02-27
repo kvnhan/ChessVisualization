@@ -24,11 +24,10 @@ class moveTree:
         return r
 
 def containsMove(moveTree, move):
-    val = False
     for mv in moveTree.moves:
         if(mv.name == move):
-            val = True
-    return val
+            return True
+    return False 
 
 def getMove(moveTree, move):
     for mv in moveTree.moves:
@@ -93,6 +92,10 @@ def readGame(moveSet):
 
     if(len(mvList) > 0):
         addGame(mvList, origin, result)
+
+def formatReturn(move):
+    move.printValues()
+    return "Looks like a valid set";
     
 
 origin = moveTree()
