@@ -214,13 +214,27 @@
 	}
 	
 	function updateMoveList(){
+		var data = ["A1","A2","A3","A3","A3","A3","A3","A3","A3","A3","A3","A3","A3","A3","A3","A3","A3","A3","A3","A3","A3","A3","A3","A3","A3","A3","A3"]
 		
+		var listOfMoves = d3.select("#listBox");
+		
+		listOfMoves.selectAll("p").data(data).enter()
+								  .append("p")
+		                          .attr("id", "listOfMoves")
+								  .style("display", "inline-block")
+								  .style("margin-right", "5px")
+								  .style("margin-top", "-5px")
+								  .style("font-size", "14px")
+								  .style("background-color", "lightgrey")
+								  .style("border", "1px solid black")
+								  .style("border-radius", "5px")
+								  .text(function(d){return d;});
 	}
 	
 	function setMoveText(){
 		var v =  d3.select("#thirdandhalfView").append("div")
 		                                       .style("height", ((fieldSize * fieldSize) / 40) + "px")
-											   .style("width", ((fieldSize * fieldSize) / 36) + "px")
+											   .style("width", ((fieldSize * fieldSize) / 36) - 20 + "px")
 											   .style("float", "left");
 		
 		var view = v.append("svg")
@@ -229,7 +243,7 @@
 					
 		var listView =  d3.select("#thirdandhalfView").append("div")
 		                                          .style("height", ((fieldSize * fieldSize) / 40) + "px")
-												  .style("width", ((fieldSize * fieldSize) / 36) + "px")
+												  .style("width", ((fieldSize * fieldSize) / 36) + 20 + "px")
 											      .style("float", "right");
 		var textMove = view.append("text")
 						   .attr("id", "moveText")
@@ -241,9 +255,9 @@
 						  .attr("id", "pieceBox")
 		                  .attr("height", 70)
 						  .attr("width", 70)
-						  .attr("x", 40)
+						  .attr("x", 45)
 						  .attr("stroke", "black")
-						  .attr("y", 50)
+						  .attr("y", 55)
 						  .attr("fill", "lightgrey")
 						  .attr("opacity", 0.4);
 						  
@@ -257,16 +271,17 @@
 						   
 		var lom = listView.append("p")
 		                  .attr("id", "moveText")
-						  .style("font-size", "110%")
+						  .style("font-size", "120%")
 		                  .style("margin-top", "14px")
-						  .style("margin-right", "1px")
 						  .text("List of Next Moves");
+						  
 		var listBox = listView.append("div")
 		                      .style("width", ((fieldSize * fieldSize) / 36) + "px")
 							  .attr("id", "listBox")
-							  .style("height", "68%")
+							  .style("height", "65%")
 							  .style("word-wrap", "break-word")
-							  .style("overflow-y", "auto")
+							  .style("overflow-y", "auto");
+		updateMoveList();
 	}
     function setUpMutiWindow() {
 
@@ -488,7 +503,7 @@
 	
 	function testPostRq(){
         submitURL = "http://ashaji.dyn.wpi.edu:5000/getmoves"
-        var postReq = "Hello Server. Give me some moves";
+        var postReq = ["G5"];
         console.log("JS of req:" + JSON.stringify(postReq));
         var xhr = new XMLHttpRequest();
         xhr.open("POST", "/getmoves", true);
