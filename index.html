@@ -28,6 +28,9 @@
 		border-top: 5px solid transparent;
 	}
 	
+	.selected{
+        opacity: 0.5;
+	}
 </style>
 <head>
     <script src="https://d3js.org/d3.v5.min.js"></script>
@@ -180,6 +183,8 @@
             .text(function (d) { return d.c; })
             .attr("y", function (d) { return +d3.select("#" + d.p).attr("y") + (30 * factor) })
             .attr("x", function (d) { return +d3.select("#" + d.p).attr("x") + (20 * factor); })
+			.on("mouseover", function(d){d3.select(this).style("cursor", "pointer");})
+			.on("mouseout", function(d){d3.select(this).style("cursor", "default");}) 	
             .on("click", function () {
 				selectedText = d3.select(this).attr("id");
 				getPiece(selectedText);
@@ -220,15 +225,20 @@
 		
 		listOfMoves.selectAll("p").data(data).enter()
 								  .append("p")
-		                          .attr("id", "listOfMoves")
+		                          .attr("id", function(d){return d;})
 								  .style("display", "inline-block")
-								  .style("margin-right", "5px")
+								  .style("margin-right", "10px")
 								  .style("margin-top", "-5px")
 								  .style("font-size", "14px")
 								  .style("background-color", "lightgrey")
 								  .style("border", "1px solid black")
 								  .style("border-radius", "5px")
-								  .text(function(d){return d;});
+								  .text(function(d){return d;})
+								  .on("click", function(){ var d = d3.select(this).attr("id"); testPostRq(d);})
+								  .on("mouseover", function(d){d3.select(this).style("cursor", "pointer");
+								  d3.select(this).classed("selected", true);})
+								  .on("mouseout", function(d){d3.select(this).style("cursor", "default");
+								  d3.select(this).classed("selected", false);});
 	}
 	
 	function setMoveText(){
@@ -247,7 +257,7 @@
 											      .style("float", "right");
 		var textMove = view.append("text")
 						   .attr("id", "moveText")
-						   .attr("font-size", 18)
+						   .attr("font-size", 20)
 		                   .attr("transform", "translate(30, 30)")
 						   .text("Current Piece");
 						   
@@ -271,8 +281,8 @@
 						   
 		var lom = listView.append("p")
 		                  .attr("id", "moveText")
-						  .style("font-size", "120%")
-		                  .style("margin-top", "14px")
+						  .style("font-size", "123%")
+		                  .style("margin-top", "12px")
 						  .text("List of Next Moves");
 						  
 		var listBox = listView.append("div")
@@ -429,8 +439,6 @@
             .attr("class", "graph")
 			.attr("height", ((fieldSize * fieldSize) / 30))
 			.attr("width", ((fieldSize * fieldSize) / 18))
-            <!-- .attr("transform", "translate(175, 110)"); -->
-
 
         var piecharts = graph.selectAll("path")
             .data(pie)
@@ -460,9 +468,8 @@
 			  .enter()
 			  .append("th")
 			  .append("div")
-			  <!-- .style("border", "1px solid black") -->
 			  .style("text-align", "left")
-			  .style("padding", "6px")
+			  .style("padding", "10px")
 			  .text(function(d){return d;});
 			  
 		var bodyView = table.append("tbody");    
@@ -501,9 +508,9 @@
 							  })
 	}
 	
-	function testPostRq(){
+	function testPostRq(d){
         submitURL = "http://ashaji.dyn.wpi.edu:5000/getmoves"
-        var postReq = ["G5"];
+        var postReq = [d];
         console.log("JS of req:" + JSON.stringify(postReq));
         var xhr = new XMLHttpRequest();
         xhr.open("POST", "/getmoves", true);
