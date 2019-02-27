@@ -41,9 +41,9 @@
     <div class="container2" id="chart2"></div>
 </body>
 <script>
-    
+   
+    var url = "http://ashaji.dyn.wpi.edu:5000"
     var board = [];
-	
 	var xAxis = [{move: "C6", win: 30, lose: 70}, 
 		{move: "C4", win: 60, lose: 40}, 
 		{move: "C5", win: 70, lose: 30},
@@ -234,7 +234,7 @@
 	
 	//var testCount = 0;
 	function updateMoveList(){
-		var data = ["C4", "C5"]
+		var data = ["c4", "c5"]
 		
 		var listOfMoves = d3.select("#listBox");
 		
@@ -253,7 +253,7 @@
 										/*TODO make this grab all moves*/
 										var d = d3.select(this).attr("id");
 										//testCount++;
-										updateLineChart({move: "G" + testCount, win: 30, lose: 70})
+										updateLineChart({move: "g" + testCount, win: 30, lose: 70})
 										getMoves(data);})
 								  .on("mouseover", function(d){d3.select(this).style("cursor", "pointer");
 								  d3.select(this).classed("selected", true);})
@@ -588,7 +588,7 @@
 	}
 	
 	function getMoves(d){
-        submitURL = "http://ashaji.dyn.wpi.edu:5000/getmoves"
+        submitURL = url + "/getmoves"
         var postReq = {};
         postReq["moves"] = d;
         console.log("JS of req:" + JSON.stringify(postReq));
