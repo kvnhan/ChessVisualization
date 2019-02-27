@@ -32,8 +32,9 @@
         opacity: 0.5;
 	}
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.2/chess.js"></script>
+<script src="https://d3js.org/d3.v5.min.js"></script>
 <head>
-    <script src="https://d3js.org/d3.v5.min.js"></script>
 </head>
 <body>
     <div class="container1" id="chart1"></div>
@@ -41,7 +42,16 @@
     <div class="container2" id="chart2"></div>
 </body>
 <script>
-   
+console.log("test") 
+    //Chess engine related materials
+var chess = new Chess();
+console.log(chess.ascii())
+
+console.log(chess.get("c2"));
+
+var moves = [];
+
+
     var url = "http://ashaji.dyn.wpi.edu:5000"
     var board = [];
 	var xAxis = [{move: "C6", win: 30, lose: 70}, 
@@ -630,10 +640,15 @@
             if (xhr.readyState == XMLHttpRequest.DONE) {
                 console.log("XHR:" + xhr.responseText);
                 console.log(xhr.responseText);
+                //TODO update everything that needs to be update.
             } else {
                 alert("Did not get response, server is down?")
             }
         }
 	}
+getMoves([])
+
+
+
 </script>
 </html>
