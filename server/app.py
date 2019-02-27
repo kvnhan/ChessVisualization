@@ -18,6 +18,17 @@ def submit():
         print("I got a submission")
         req = request.get_json()
         print("req" + str(request.get_json()))
+        print(req["moves"][0])
+        
+        temp = origin
+
+        for move in req["moves"]:
+            if(containsMove(temp,move)):
+                temp = getMove(temp,move)
+                return(formatReturn(temp))
+            else:
+                return "404, tree not found"
+
         return  "Succesful submission"
     else:
         print("Not a post req")

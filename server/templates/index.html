@@ -236,8 +236,7 @@
 								  .style("border-radius", "5px")
 								  .text(function(d){return d;})
 								  .on("click", function(){ 
-                            /*TODO make this grab all moves*/
-                            var d = d3.select(this).attr("id"); getMoves(d);})
+                            var d = d3.select(this).attr("id"); getMoves(["c4","c5"]);})
                             
 								  .on("mouseover", function(d){d3.select(this).style("cursor", "pointer");
 								  d3.select(this).classed("selected", true);})
