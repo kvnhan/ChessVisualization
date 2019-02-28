@@ -32,7 +32,6 @@ class moveTree:
 			r["draw"] = mv.draws / mv.numInstances
 			mvList.append(r)
 		return mvList
-
 def getNumInstances(tree):
 	return tree.numInstances
 
@@ -110,7 +109,14 @@ def readGame(moveSet):
 
 	if(len(mvList) > 0):
 		addGame(mvList, origin, result)
-
+def formatReturn(move):	
+        ret = {}	
+        ret["move"] = move.getStatistics()	
+        potMoves = []	
+        for m in move.moves:	
+                potMoves.append(m.getValues())	
+        ret["potMoves"] = potMoves	
+        return ret;
 origin = moveTree()
 origin.name = "origin"
 '''
