@@ -18,7 +18,6 @@ def submit():
         print("I got a submission")
         req = request.get_json()
         print("req" + str(request.get_json()))
-        print(req["moves"][0])
         
         temp = makeTree.origin
 
