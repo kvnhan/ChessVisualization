@@ -6,7 +6,7 @@ import os
 import makeTree
 
 app = Flask(__name__, static_url_path='')
-
+app.config['TEMPLATES_AUTO_RELOAD'] = True #TODO remove when done
 @app.route("/")
 def index():
     return render_template('index.html')
