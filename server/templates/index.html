@@ -636,9 +636,7 @@
                                 .style("fill", function (d, i) { return colorScaleBar(i);})
                                 .attr("stroke", "black")
                                 .attr("id", function (d) {return d.name; })
-                                .attr("x", function (d) { 
-                                  console.log("hi\n");
-                                  console.log(secViewheight);
+                                .attr("x", function (d) {
                                   return xScale(d.v); })
                                 .attr("y", function (d) { 
                                   //return yScale(name) - 100; 
@@ -646,9 +644,8 @@
                                   })
                                 .attr('height', 60)
                                 .attr('width', function (d) {
-                                  console.log(secViewwidth);
-                                  console.log(widthScale(d.v));
-                                  return widthScale(d.v); });
+                                  return widthScale(d.v); 
+                                  });
   }
 
   function searchForMoveForBar(move){
@@ -676,7 +673,7 @@
     //var yScale = d3.scaleLinear().range([300, secViewheight - 50]);
 
     var xScale = d3.scaleLinear().range([0, secViewwidth + 100]);
-    var yScale = d3.scaleOrdinal().range([secViewheight - 50]);
+    var yScale = d3.scaleOrdinal().range([  secViewheight - 50]);
 
 
     xScale.domain([0, 100]);
