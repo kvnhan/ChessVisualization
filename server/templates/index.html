@@ -47,7 +47,6 @@ var moves = [];
 var currentData;
 var potentialMove = {'potMoves':
     [{'draws': 4609, 'blackW': 3687, 'whiteW': 2555, 'name': 'e4', 'numInstances': 10851},
-<<<<<<< HEAD
      {'draws': 3922, 'blackW': 2570, 'whiteW': 1815, 'name': 'd4', 'numInstances': 8307},
      {'draws': 756, 'blackW': 554, 'whiteW': 341, 'name': 'c4', 'numInstances': 1651},
      {'draws': 1281, 'blackW': 1003, 'whiteW': 672, 'name': 'Nf3', 'numInstances': 2956},
@@ -114,73 +113,6 @@ var potentialMove = {'potMoves':
   historyTable();
 
   function removeFirstLetter(str){
-=======
-        {'draws': 3922, 'blackW': 2570, 'whiteW': 1815, 'name': 'd4', 'numInstances': 8307},
-        {'draws': 756, 'blackW': 554, 'whiteW': 341, 'name': 'c4', 'numInstances': 1651},
-        {'draws': 1281, 'blackW': 1003, 'whiteW': 672, 'name': 'Nf3', 'numInstances': 2956},
-        {'draws': 34, 'blackW': 47, 'whiteW': 41, 'name': 'b3', 'numInstances': 122},
-        {'draws': 0, 'blackW': 1, 'whiteW': 1, 'name': 'c3', 'numInstances': 2},
-        {'draws': 7, 'blackW': 7, 'whiteW': 8, 'name': 'Nc3', 'numInstances': 22},
-        {'draws': 36, 'blackW': 41, 'whiteW': 31, 'name': 'g3', 'numInstances': 108},
-        {'draws': 7, 'blackW': 15, 'whiteW': 10, 'name': 'f4', 'numInstances': 32},
-        {'draws': 4, 'blackW': 2, 'whiteW': 3, 'name': 'e3', 'numInstances': 9},
-        {'draws': 0, 'blackW': 4, 'whiteW': 0, 'name': 'a4', 'numInstances': 4},
-        {'draws': 1, 'blackW': 1, 'whiteW': 7, 'name': 'b4', 'numInstances': 9},
-        {'draws': 0, 'blackW': 1, 'whiteW': 2, 'name': 'g4', 'numInstances': 3},
-        {'draws': 1, 'blackW': 2, 'whiteW': 0, 'name': 'd3', 'numInstances': 3},
-        {'draws': 2, 'blackW': 2, 'whiteW': 2, 'name': 'a3', 'numInstances': 6},
-        {'draws': 0, 'blackW': 1, 'whiteW': 0, 'name': 'Na3', 'numInstances': 1},
-        {'draws': 1, 'blackW': 0, 'whiteW': 1, 'name': 'f3', 'numInstances': 2},
-        {'draws': 0, 'blackW': 1, 'whiteW': 0, 'name': 'Nh3', 'numInstances': 1},
-        {'draws': 0, 'blackW': 1, 'whiteW': 0, 'name': 'h3', 'numInstances': 1}],
-    'move': {'draws': 10661, 'blackW': 7940, 'whiteW': 5489, 'name': 'origin', 'numInstances': 24090}}
-var history = [];
-var url = "http://ashaji.dyn.wpi.edu:5000"
-var board = [];
-var xAxis = [];
-var colorScale = d3.scaleOrdinal(d3.schemeCategory10);
-var domainData = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"];
-var nextMove = [{ m: "D2", bw: 33, ww: 40, t: 33 }, { m: "C2", bw: 15, ww: 80, t: 5 }, { m: "D8", bw: 5, ww: 75, t: 20 }];
-var firstView, secondView, thirdView, fourthView;
-var posChar = ["h", "g", "f", "e", "d", "c", "b", "a"]
-var count = 8;
-var factor = 2;
-var tempCount = 8;
-var lastChar = "a";
-var colCount = 1;
-var pieceCount = 0;
-var index = 0;
-var div;
-var svg;
-var selected;
-var selectedPiece;
-var selectedText;
-var dy = 35;
-var dx = 20;
-var piece;
-var marginTop = 30,
-    marginLeft = 30,
-    fieldSize = 40 * factor,
-    boardDimension = 8,
-    boardSize = boardDimension * fieldSize;
-
-var xLineValue;
-var xLineScale;
-var yLineScale;
-
-parseJson();
-makeChessBoard();
-setUpMutiWindow();
-setMoveText();
-createListOfMovesArea();
-createBarChart();
-//createPieChart();
-createLineChart();
-searchForMoveForPie();
-historyTable();
-
-function removeFirstLetter(str){
->>>>>>> 14e285bc3c586e7e86697fba9799841221fee800
     if(str.length > 2){
         return str.substring(1);
     }
@@ -189,24 +121,16 @@ function removeFirstLetter(str){
 
 function findPieceID(name, move){
     piece.forEach(function(i){
-<<<<<<< HEAD
       if(name == i.n){
         searchForMoveForBar(i.id + move);
         updateLineChart(i.id + move);
         updateHistory(i.id + move);
       }
-=======
-        if(name == i.n){
-            searchForMoveForBar(i.id + move);
-            updateLineChart(i.id + move);
-        }
->>>>>>> 14e285bc3c586e7e86697fba9799841221fee800
     })
 }
 function hightlightSquare(listOfMove){
     d3.selectAll("#copy").remove();
     piece.forEach(function(i){
-<<<<<<< HEAD
       if(selectedText == i.n){
         listOfMove.forEach(function(i){
           var str = removeFirstLetter(i);
@@ -227,27 +151,6 @@ function hightlightSquare(listOfMove){
           });;
         })
       }
-=======
-        if(selectedText == i.n){
-            listOfMove.forEach(function(i){
-                var str = removeFirstLetter(i);
-                d3.select("#" + str).attr("stroke", "red")
-                    .attr("stroke-width", 3)
-                    .on("click", function () {
-                        d3.selectAll("rect").attr("stroke", "none");
-                        var dx = d3.select(this).attr("x");
-                        var dy = d3.select(this).attr("y");
-                        findandSetNewPiece(selected, d3.select(this).attr("id"))
-                        var thisPiece = d3.select("." + selected);
-                        var thisPieceX = d3.select("#" + selectedText).attr("x", (20 * factor));
-                        var thisPieceY = d3.select("#" + selectedText).attr("y", (30 * factor));
-                        findPieceID(selected, d3.select(this).attr("id"));
-                        updateLineChart();
-                        thisPiece.attr("transform", "translate(" + (dx) + ", " + (dy) + ")");
-                    });;
-            })
-        }
->>>>>>> 14e285bc3c586e7e86697fba9799841221fee800
     })
 
 }
@@ -727,7 +630,6 @@ function searchForMoveForPie(){
         list.push({ name: i.name, v: i.numInstances });
         domain.push(i.name);
     })
-<<<<<<< HEAD
      updatePiechart(list, domain);
   }
 
@@ -771,49 +673,6 @@ function searchForMoveForPie(){
         var w = Math.round((i.whiteW/total) * 100);
         o = [object, w, b, d];
       }
-=======
-    updatePiechart(list, domain);
-}
-
-function createPieChart(list, domain) {
-
-    var pie = d3.pie()
-        .value(function (d) { return d.v; })
-        .sort(null)
-    (list);
-
-    var arc = d3.arc()
-        .innerRadius(0)
-        .outerRadius(90);
-
-    var graph = d3.select("#firstView").append("svg")
-        .attr("class", "piegraph")
-        .attr("height", ((fieldSize * fieldSize) / 30))
-        .attr("width", ((fieldSize * fieldSize) / 18))
-
-    var piecharts = graph.selectAll("path")
-        .data(pie)
-        .enter()
-        .append("path")
-        .attr("d", arc)
-        .attr("id", function (i) { return i.data.name; })
-        .attr("stroke", "black")
-        .attr("fill", function (d, i) {
-            return colorScale(i);
-        });
-    piecharts.attr("transform", "translate(175, 110)")
-}
-
-function updateHistory(object){
-    potentialMove.potMoves.forEach(function(i){
-        if(i.name == object){
-            var total = i.blackW + i.draws + i.whiteW;
-            var d = (i.draws/total) * 100;
-            var b = (i.blackW/total) * 100;
-            var w = (i.whiteW/total) * 100;
-            history.push([object, w, b, d]);
-        }
->>>>>>> 14e285bc3c586e7e86697fba9799841221fee800
     })
     tableList.push(o);
     d3.select("#tableBody").remove();
@@ -822,7 +681,6 @@ function updateHistory(object){
         .attr("id", "tableBody");
 
     var rows = bodyView.selectAll("tr")
-<<<<<<< HEAD
                .data(tableList)
     				   .enter()
     				   .append("tr");
@@ -835,18 +693,6 @@ function updateHistory(object){
              .style("text-overflow", "ellipsis")
              .style("width", "10%")
              .style("text-align", "center");
-=======
-        .data(history)
-        .enter()
-        .append("tr")
-        .style("text-align", "center");
-
-    var values = rows.selectAll("td")
-        .data(function(d){return d;})
-        .enter()
-        .append("td")
-        .text(function(d){return d;});
->>>>>>> 14e285bc3c586e7e86697fba9799841221fee800
 
 }
 
@@ -860,7 +706,6 @@ function historyTable(){
     var header = table.append("tr");
 
     var th = header.selectAll("th")
-<<<<<<< HEAD
     	  .data(["Move", "Win%", "Lose%", "Tie%"])
     	  .enter()
     	  .append("th")
@@ -872,16 +717,6 @@ function historyTable(){
     var bodyView = d3.select("#historyTable").append("tbody")
         .attr("id", "tableBody");
   }
-=======
-        .data(["Move", "Win%", "Lose%", "Tie%"])
-        .enter()
-        .append("th")
-        .append("div")
-        .style("text-align", "left")
-        .style("padding", "10px")
-        .text(function(d){return d;});
-}
->>>>>>> 14e285bc3c586e7e86697fba9799841221fee800
 
 function testFunction(d){
 
