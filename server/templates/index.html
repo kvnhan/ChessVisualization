@@ -65,7 +65,8 @@
      {'draws': 0, 'blackW': 1, 'whiteW': 0, 'name': 'Nh3', 'numInstances': 1},
      {'draws': 0, 'blackW': 1, 'whiteW': 0, 'name': 'h3', 'numInstances': 1}],
    'move': {'draws': 10661, 'blackW': 7940, 'whiteW': 5489, 'name': 'origin', 'numInstances': 24090}}
-  var history = [];
+
+  var tableList = [];
   var url = "http://ashaji.dyn.wpi.edu:5000"
   var board = [];
   var xAxis = [];
@@ -122,6 +123,7 @@
       if(name == i.n){
         searchForMoveForBar(i.id + move);
         updateLineChart(i.id + move);
+        updateHistory(i.id + move);
       }
     })
   }
@@ -144,6 +146,7 @@
                                   findPieceID(selected, d3.select(this).attr("id"));
                                   updateLineChart();
                                   thisPiece.attr("transform", "translate(" + (dx) + ", " + (dy) + ")");
+                                  d3.selectAll("rect").on("click", null);
           });;
         })
       }
@@ -658,31 +661,37 @@
           piecharts.attr("transform", "translate(175, 110)")
   }
 
+
   function updateHistory(object){
+    var o;
     potentialMove.potMoves.forEach(function(i){
       if(i.name == object){
         var total = i.blackW + i.draws + i.whiteW;
-        var d = (i.draws/total) * 100;
-        var b = (i.blackW/total) * 100;
-        var w = (i.whiteW/total) * 100;
-        history.push([object, w, b, d]);
+        var d = Math.round((i.draws/total) * 100);
+        var b = Math.round((i.blackW/total) * 100);
+        var w = Math.round((i.whiteW/total) * 100);
+        o = [object, w, b, d];
       }
     })
+    tableList.push(o);
+    d3.select("#tableBody").remove();
 
     var bodyView = d3.select("#historyTable").append("tbody")
-    .attr("id", "tableBody");
+        .attr("id", "tableBody");
 
     var rows = bodyView.selectAll("tr")
-               .data(history)
+               .data(tableList)
     				   .enter()
-    				   .append("tr")
-    				   .style("text-align", "center");
+    				   .append("tr");
 
     var values = rows.selectAll("td")
     				 .data(function(d){return d;})
     				 .enter()
     				 .append("td")
-    				 .text(function(d){return d;});
+    				 .text(function(d){return d;})
+             .style("text-overflow", "ellipsis")
+             .style("width", "10%")
+             .style("text-align", "center");
 
   }
 
@@ -703,6 +712,9 @@
     	  .style("text-align", "left")
     	  .style("padding", "10px")
     	  .text(function(d){return d;});
+
+    var bodyView = d3.select("#historyTable").append("tbody")
+        .attr("id", "tableBody");
   }
 
   function testFunction(d){
