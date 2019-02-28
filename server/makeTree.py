@@ -130,6 +130,6 @@ for filename in glob.glob('parsing/data/*.pgn'):
         print("numlines:" + str(numlines))
         for x in range(numlines):
             readGame(f)
-
+    break
 origin.printValues()
 
