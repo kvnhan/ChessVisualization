@@ -257,6 +257,8 @@ function makeChessBoard() {
         .on("mouseover", function(d){d3.select(this).style("cursor", "pointer");})
         .on("mouseout", function(d){d3.select(this).style("cursor", "default");})
         .on("click", function () {
+            d3.selectAll("rect").attr("stroke", "none");
+            d3.selectAll("rect").on("click", null);
             selectedText = d3.select(this).attr("id");
             getPiece(selectedText);
             findPiece(selectedText);
