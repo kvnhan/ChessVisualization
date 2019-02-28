@@ -340,7 +340,7 @@ function updateMoveList(data){
 }
 
 function updateLineChart(move){
-    moves.potMoves.forEach(function(i){
+    currentData.potMoves.forEach(function(i){
         if(i.name == move){
             var total = i.blackW + i.draws + i.whiteW;
             var d = (i.draws/total) * 100;
@@ -577,7 +577,7 @@ function updateBarChart(i){
 
 function searchForMoveForBar(move){
     var list = []
-    moves.potMoves.forEach(function(i){
+    currentData.potMoves.forEach(function(i){
         if(i.name == move){
             var total = i.blackW + i.draws + i.whiteW;
             var d = (i.draws/total) * 100;
@@ -640,7 +640,7 @@ function updatePiechart(moves, domain){
 function searchForMoveForPie(){
     var list = []
     var domain = []
-    moves.potMoves.forEach(function(i){
+    currentData.potMoves.forEach(function(i){
         list.push({ name: i.name, v: i.numInstances });
         domain.push(i.name);
     })
@@ -679,7 +679,7 @@ function searchForMoveForPie(){
 
   function updateHistory(object){
     var o;
-    moves.potMoves.forEach(function(i){
+    currentData.potMoves.forEach(function(i){
       if(i.name == object){
         var total = i.blackW + i.draws + i.whiteW;
         var d = Math.round((i.draws/total) * 100);
