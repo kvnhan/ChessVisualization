@@ -25,7 +25,7 @@
     }
 
     #fourthView tbody {
-        border-top: 5px solid transparent;
+        border-top: 15px solid transparent;
     }
 
     .selected{
@@ -101,13 +101,13 @@ var potentialMove = {'potMoves':
   var xLineScale;
   var yLineScale;
 
+  getMoves([])
   parseJson();
   makeChessBoard();
   setUpMutiWindow();
   setMoveText();
   createListOfMovesArea();
   createBarChart();
-  //createPieChart();
   createLineChart();
   searchForMoveForPie();
   historyTable();
@@ -122,6 +122,8 @@ var potentialMove = {'potMoves':
 function findPieceID(name, move){
     piece.forEach(function(i){
       if(name == i.n){
+        moves.push(i.id + move);
+        getMoves(moves);
         searchForMoveForBar(i.id + move);
         updateLineChart(i.id + move);
         updateHistory(i.id + move);
@@ -317,8 +319,19 @@ function updateMoveList(data){
         .text(function(d){return removeFirstLetter(d);})
         .on("click", function(){
             var d = d3.select(this).attr("id");
-            updateLineChart({move: d, win: 30, lose: 70})
-            getMoves(data);
+            moves.push(d);
+            d = removeFirstLetter(d);
+            updateLineChart(d)
+            getMoves(moves);
+            d3.selectAll("rect").attr("stroke", "none");
+            var dx = d3.select("#" + d).attr("x");
+            var dy = d3.select("#" + d).attr("y");
+            var thisPiece = d3.select("." + selected);
+            var thisPieceX = d3.select("#" + selectedText).attr("x", (20 * factor));
+            var thisPieceY = d3.select("#" + selectedText).attr("y", (30 * factor));
+            findPieceID(selected, d);
+            thisPiece.attr("transform", "translate(" + (dx) + ", " + (dy) + ")");
+            d3.selectAll("rect").on("click", null);
             findandSetNewPiece(selectedText, d)})
         .on("mouseover", function(d){d3.select(this).style("cursor", "pointer");
             d3.select(this).classed("selected", true);})
@@ -327,7 +340,7 @@ function updateMoveList(data){
 }
 
 function updateLineChart(move){
-    potentialMove.potMoves.forEach(function(i){
+    moves.potMoves.forEach(function(i){
         if(i.name == move){
             var total = i.blackW + i.draws + i.whiteW;
             var d = (i.draws/total) * 100;
@@ -564,8 +577,7 @@ function updateBarChart(i){
 
 function searchForMoveForBar(move){
     var list = []
-    console.log(move);
-    potentialMove.potMoves.forEach(function(i){
+    moves.potMoves.forEach(function(i){
         if(i.name == move){
             var total = i.blackW + i.draws + i.whiteW;
             var d = (i.draws/total) * 100;
@@ -628,7 +640,7 @@ function updatePiechart(moves, domain){
 function searchForMoveForPie(){
     var list = []
     var domain = []
-    potentialMove.potMoves.forEach(function(i){
+    moves.potMoves.forEach(function(i){
         list.push({ name: i.name, v: i.numInstances });
         domain.push(i.name);
     })
@@ -667,7 +679,7 @@ function searchForMoveForPie(){
 
   function updateHistory(object){
     var o;
-    potentialMove.potMoves.forEach(function(i){
+    moves.potMoves.forEach(function(i){
       if(i.name == object){
         var total = i.blackW + i.draws + i.whiteW;
         var d = Math.round((i.draws/total) * 100);
@@ -764,8 +776,7 @@ function getMoves(d){
         }
     }
 }
-getMoves([])
-console.log(currentData)
+// console.log(currentData)
 
 
     </script>
