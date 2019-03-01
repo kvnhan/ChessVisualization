@@ -27,9 +27,9 @@ class moveTree:
 		for mv in self.moves:
 			r = {}
 			r["name"] = mv.name
-			r["whiteW"] = mv.whiteW / mv.numInstances
-			r["blackW"] = mv.blackW / mv.numInstances
-			r["draw"] = mv.draws / mv.numInstances
+			r["whiteW"] = mv.whiteW
+			r["blackW"] = mv.blackW
+			r["draw"] = mv.draws
 			mvList.append(r)
 		return mvList
 def getNumInstances(tree):
@@ -110,13 +110,15 @@ def readGame(moveSet):
 	if(len(mvList) > 0):
 		addGame(mvList, origin, result)
 def formatReturn(move):	
-        ret = {}	
-        ret["move"] = move.getStatistics()	
-        potMoves = []	
-        for m in move.moves:	
-                potMoves.append(m.getValues())	
-        ret["potMoves"] = potMoves	
-        return ret;
+	ret = {}	
+	ret["move"] = move.getStatistics()	
+	potMoves = []	
+	for m in move.moves:	
+		potMoves.append(m.getStatistics())
+	ret["potMoves"] = potMoves
+	print(ret)
+	return ret;
+
 origin = moveTree()
 origin.name = "origin"
 '''
@@ -129,12 +131,13 @@ for x in range(num_lines):
 	readGame(moveSet)
 '''
 for filename in glob.glob('data/*.pgn'):
-    print(filename)
-    with open(filename) as f:
-        numlines = sum(1 for line in open(filename))
-        print("numlines:" + str(numlines))
-        for x in range(numlines):
-            readGame(f)
+	print(filename)
+	with open(filename) as f:
+		numlines = sum(1 for line in open(filename))
+		print("numlines:" + str(numlines))
+		for x in range(numlines):
+			readGame(f)
+	break
 
 #origin.printValues()
 

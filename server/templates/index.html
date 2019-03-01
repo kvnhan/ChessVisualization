@@ -763,7 +763,6 @@
   }
 
   function updatePiechart(moves, domain){
-    console.log("heloooooo");
     d3.select(".piegraph").remove();
     createPieChart(moves, domain);
   }
@@ -852,7 +851,9 @@
                     .style("margin-top", "30px")
                     .style("margin-left", "40px");
 
-    var th = header.selectAll("th")
+      var header = table.append("tr");
+      
+      var th = header.selectAll("th")
                     .data(["Move", "White%", "Black%", "Draw%"])
                     .enter()
                     .append("th")
@@ -860,9 +861,7 @@
                     .style("text-align", "left")
                     .style("padding", "10px")
                     .text(function(d){return d;});
-
-
-
+  }
   function testFunction(d){
 
     var t = d3.transition().duration(3000);
@@ -903,13 +902,13 @@
           console.log(currentData)
           distributePotentialMove();
           searchForMoveForPie();
-  //TODO update everything that needs to be update.
+          //TODO update everything that needs to be update.
         }
         else{
-  //TODO - shouldn't get here? something about unique game?
+        //TODO - shouldn't get here? something about unique game?
         }
     } else {
-  alert("Did not get response, server is down?")
+        alert("Did not get response, server is down?")
       }
     }
   }
