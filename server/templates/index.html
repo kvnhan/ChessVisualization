@@ -130,9 +130,10 @@ function findPieceID(name, move){
     })
 }
 
-function updateChart(){
-  searchForMoveForBar(selectedText);
-  updateLineChart(selectedText);
+function updateChart(i){
+  updateHistory(i);
+  searchForMoveForBar(i);
+  updateLineChart(i);
 }
 function cleanPotentialList(){
     piece.forEach(function(i){
@@ -156,8 +157,10 @@ function hightlightSquare(){
                         d3.selectAll(".dummy").remove();
                         updatePieceToBoard();
                         makePieces();
-                        updateChart();
-                        getMoves(chess.history());
+                        updateMoveList(list);
+                        var moveHist = chess.history();
+                        updateChart(moveHist[moveHist.length - 1]);
+                        getMoves(moveHist);
                     });
 
     })
@@ -367,58 +370,11 @@ function makePieces(){
       });
 }
 
-
-function moveChessPiece(d){
-    findandSetNewPiece(selected, d);
-    findCurrentLoc(d);
-}
-
-function findCurrentLoc(move){
-    piece.forEach(function(i){
-        if(selected == i.n){
-            updateBoard(i.prev, move);
-        }
-    })
-}
-function listPotentialMoves(op){
-    d3.select("#listDiv").remove();
-    hightlightSquare(op);
-    createListOfMovesArea();
-    updateMoveList(op);
-}
-
-function findPiece(pieceName){
-    piece.forEach(function (i) {
-        if (pieceName == i.n) {
-            var op = i.op;
-            listPotentialMoves(op)
-        }
-    })
-}
-
-function getPiece(pieceName){
-    piece.forEach(function (i) {
-        if (pieceName == i.n) {
-            updateMoveText(i.c);
-        }
-    })
-}
-function findandSetNewPiece(pieceName, newLoc) {
-    piece.forEach(function (i) {
-        if (pieceName == i.n) {
-            i.prev = i.p;
-            i.p = newLoc;
-            i.op = [];
-        }
-    })
-}
-
 function updateMoveText(s){
     d3.select("#pp").text(s);
 }
 
 function updateMoveList(data){
-
     var listOfMoves = d3.select("#listBox");
     listOfMoves.selectAll("moveList").data(data).enter()
         .append("p")
@@ -432,17 +388,17 @@ function updateMoveList(data){
         .style("border-radius", "5px")
         .text(function(d){return removeFirstLetter(d);})
         .on("click", function(){
-            var d = d3.select(this).attr("id");
-            //d3.selectAll("rect").attr("stroke", "none");
-            var dx = d3.select("#" + d).attr("x");
-            var dy = d3.select("#" + d).attr("y");
-            var thisPiece = d3.select("." + selected);
-            var thisPieceX = d3.select("#" + selectedText).attr("x", (20 * factor));
-            var thisPieceY = d3.select("#" + selectedText).attr("y", (30 * factor));
-            findPieceID(selected, d);
-            thisPiece.attr("transform", "translate(" + (dx) + ", " + (dy) + ")");
-            //d3.selectAll("rect").on("click", null);
-            findandSetNewPiece(selectedText, d)})
+            var from = selectedText;
+            var to = d3.select(this).attr("id");
+            chess.move({from: from, to: to});
+            d3.selectAll(".dummy").remove();
+            updatePieceToBoard();
+            makePieces();
+            var moveHist = chess.history();
+            updateChart(moveHist[moveHist.length - 1]);
+            getMoves(moveHist);
+          }
+        )
         .on("mouseover", function(d){d3.select(this).style("cursor", "pointer");
             d3.select(this).classed("selected", true);})
         .on("mouseout", function(d){d3.select(this).style("cursor", "default");
