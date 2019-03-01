@@ -20,18 +20,13 @@ class moveTree:
 
     
 	def getStatistics(self):
-		mvList = []
+		r = {}
+		r["name"] = self.name
+		r["whiteW"] = self.whiteW
+		r["blackW"] = self.blackW
+		r["draw"] = self.draws
+		return r
 
-		self.moves.sort(reverse=True, key=getNumInstances)
-
-		for mv in self.moves:
-			r = {}
-			r["name"] = mv.name
-			r["whiteW"] = mv.whiteW
-			r["blackW"] = mv.blackW
-			r["draw"] = mv.draws
-			mvList.append(r)
-		return mvList
 def getNumInstances(tree):
 	return tree.numInstances
 
