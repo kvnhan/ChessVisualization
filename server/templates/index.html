@@ -143,33 +143,20 @@ function cleanPotentialList(){
 
 function hightlightSquare(){
     var list = getPotentialMoves(selectedText);
+    updateMoveList(list);
     d3.selectAll("#copy").remove();
     list.forEach(function(i){
       var str = removeFirstLetter(i);
-      console.log(str);
+      console.log("Hello: " + str);
       d3.select("#" + str).attr("stroke", "red")
-                    .attr("stroke-width", 3)
-                    .on("click", function () {
-                        d3.selectAll("rect").attr("stroke", "none");
-                        var from = selectedText;
-                        var to = d3.select(this).attr("id");
-                        chess.move({from: from, to: to});
-                        d3.selectAll(".dummy").remove();
-                        updatePieceToBoard();
-                        makePieces();
-                        updateMoveList(list);
-                        var moveHist = chess.history();
-                        updateChart(moveHist[moveHist.length - 1]);
-                        getMoves(moveHist);
-                    });
-
+                    .attr("stroke-width", 3);
     })
 }
 
 function updatePieceToBoard() {
 
     var b = chess.SQUARES;
-    console.log(b)
+    //console.log(b)
     piece = []
     var x;
     var y;
@@ -240,7 +227,7 @@ function updatePieceToBoard() {
         }
 
     }
-    console.log(piece)
+    //console.log(piece)
 }
 
 function getPotentialMoves(p){
@@ -254,7 +241,7 @@ function getPotentialMoves(p){
     var x;
     for(x = 0; x < allMov.length; x++){
         if(allMov[x]["from"] == p){
-            console.log("here")
+            //console.log("here")
             var y;
             for(y = 0; y < potMov.length; y++){
                 // console.log(chess.moves()[x])
@@ -324,13 +311,16 @@ function makeChessBoard() {
         })
         .attr("opacity", 0.6)
         .on("click", function(){
-          console.log("Hello");
+          d3.selectAll("rect").attr("stroke", "none");
           var from = selectedText;
           var to = d3.select(this).attr("id");
           chess.move({from: from, to: to});
           d3.selectAll(".dummy").remove();
           updatePieceToBoard();
           makePieces();
+          var moveHist = chess.history();
+          updateChart(moveHist[moveHist.length - 1]);
+          getMoves(moveHist);
         });
 }
 
