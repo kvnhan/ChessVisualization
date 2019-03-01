@@ -645,7 +645,9 @@
                                 .attr('height', 60)
                                 .attr('width', function (d) {
                                   return widthScale(d.v); 
-                                  });
+                                  })
+                                .append("svg:title")
+                                .text(function (d){return d.name + "\n" + d.v.toFixed(2)});
   }
 
   function searchForMoveForBar(move){
@@ -709,7 +711,7 @@
   }
 
   function updatePiechart(moves, domain){
-
+    console.log("heloooooo");
     d3.select(".piegraph").remove();
     createPieChart(moves, domain);
   }
@@ -798,7 +800,7 @@
     var header = table.append("tr");
 
     var th = header.selectAll("th")
-                    .data(["Move", "Win%", "Lose%", "Tie%"])
+                    .data(["Move", "White%", "Black%", "Draw%"])
                     .enter()
                     .append("th")
                     .append("div")
