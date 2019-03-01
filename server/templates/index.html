@@ -761,7 +761,10 @@
   }
 
   function updatePiechart(moves, domain){
+<<<<<<< HEAD
 
+=======
+>>>>>>> e24f6b90f57f3210bc47a7c4e109645d02b59e01
     d3.select(".piegraph").remove();
     createPieChart(moves, domain);
   }
@@ -851,6 +854,7 @@
                     .style("margin-left", "40px");
 
       var header = table.append("tr");
+<<<<<<< HEAD
 
       var th = header.selectAll("th")
                       .data(["Move", "Win%", "Lose%", "Tie%"])
@@ -866,6 +870,18 @@
     }
 
 
+=======
+      
+      var th = header.selectAll("th")
+                    .data(["Move", "White%", "Black%", "Draw%"])
+                    .enter()
+                    .append("th")
+                    .append("div")
+                    .style("text-align", "left")
+                    .style("padding", "10px")
+                    .text(function(d){return d;});
+  }
+>>>>>>> e24f6b90f57f3210bc47a7c4e109645d02b59e01
   function testFunction(d){
 
     var t = d3.transition().duration(3000);
@@ -909,9 +925,15 @@
           //TODO update everything that needs to be update.
         }
         else{
+<<<<<<< HEAD
           //TODO - shouldn't get here? something about unique game?
         }
       } else {
+=======
+        //TODO - shouldn't get here? something about unique game?
+        }
+    } else {
+>>>>>>> e24f6b90f57f3210bc47a7c4e109645d02b59e01
         alert("Did not get response, server is down?")
       }
     }

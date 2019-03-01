@@ -108,6 +108,16 @@ def readGame(moveSet):
 
 origin = moveTree()
 origin.name = "origin"
+
+def formatReturn(move):	
+	ret = {}	
+	ret["move"] = move.getStatistics()	
+	potMoves = []	
+	for m in move.moves:	
+	    potMoves.append(m.getValues())	
+	ret["potMoves"] = potMoves	
+	return ret;
+
 '''
 moveSet = open("carlsen.pgn", "r")
 
