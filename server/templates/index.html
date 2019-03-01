@@ -94,6 +94,7 @@ createBarChart();
 createLineChart();
 historyTable();
 
+
 function removeFirstLetter(str){
     if(str.length > 2){
         return str.substring(1);
@@ -304,8 +305,39 @@ function updatePieceToBoard() {
 
     }
     console.log(piece)
-
 }
+
+function getPotentialMoves(p){
+    ret = []
+    allMov = chess.moves({ verbose: true });
+    
+    potMov = currentData["potMoves"]
+    console.log(allMov)
+    console.log(potMov)
+    console.log(p)
+    var x;
+    for(x = 0; x < allMov.length; x++){
+        if(allMov[x]["from"] == p["p"]){
+            console.log("here")
+            var y;
+            for(y = 0; y < potMov.length; y++){
+                console.log(chess.moves()[x])
+                console.log(allMov[x]["to"])
+                console.log(potMov[y])
+                if(potMov[y]["name"] ==chess.moves()[x]){
+                    ret.push(chess.moves()[x]);
+                    break;
+                }
+            }
+        }
+    }
+    return ret;
+}
+
+
+
+
+
 // Code taken and modified from: https://codepen.io/VividD/pen/bNgGKP
 function makeChessBoard() {
 
@@ -935,6 +967,7 @@ function getMoves(d){
                 distributePotentialMove();
                 searchForMoveForPie();
                 //TODO update everything that needs to be update.
+console.log(getPotentialMoves(piece[20]));
             }
             else{
                 //TODO - shouldn't get here? something about unique game?
