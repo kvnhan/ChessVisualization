@@ -83,10 +83,13 @@ var xLineValue;
 var xLineScale;
 var yLineScale;
 
+var potMoveForSelected;
+
 
 getMoves([])
 updatePieceToBoard();
 makeChessBoard();
+makePieces();
 setUpMutiWindow();
 setMoveText();
 createListOfMovesArea();
@@ -221,9 +224,6 @@ function hightlightSquare(listOfMove){
                     .attr("stroke-width", 3)
                     .on("click", function () {
                         d3.selectAll("rect").attr("stroke", "none");
-                        findPieceID(selected, d3.select(this).attr("id"));
-                        playChess(selected, d3.select(this).attr("id"));
-                        d3.selectAll("rect").attr("click", null);
                     });
             })
         }
@@ -270,9 +270,9 @@ function updatePieceToBoard() {
                             t["c"] =  "\u2657"
                         }
                         break;
-                    case "q": 
+                    case "q":
                         if(t["color"] == "b"){
-                            t["c"] =  "\u265E"
+                            t["c"] =  "\u265B"
                         }
                         else{
                             t["c"] =  "\u2655"
@@ -299,7 +299,7 @@ function updatePieceToBoard() {
                         break;
 
                 }
-                piece.push(t)                      
+                piece.push(t)
             }
         }
 
@@ -310,14 +310,14 @@ function updatePieceToBoard() {
 function getPotentialMoves(p){
     ret = []
     allMov = chess.moves({ verbose: true });
-    
+
     potMov = currentData["potMoves"]
     console.log(allMov)
     console.log(potMov)
     console.log(p)
     var x;
     for(x = 0; x < allMov.length; x++){
-        if(allMov[x]["from"] == p["p"]){
+        if(allMov[x]["from"] == p){
             console.log("here")
             var y;
             for(y = 0; y < potMov.length; y++){
@@ -333,10 +333,6 @@ function getPotentialMoves(p){
     }
     return ret;
 }
-
-
-
-
 
 // Code taken and modified from: https://codepen.io/VividD/pen/bNgGKP
 function makeChessBoard() {
@@ -391,46 +387,53 @@ function makeChessBoard() {
                 return "tan";
         })
         .attr("opacity", 0.6)
-    // .on("click", function(){
-    //   findPieceID(selected, d3.select(this).attr("id"));
-    //   playChess(selected, d3.select(this).attr("id"));
-    // });
-
-    var chessPiece = svg.selectAll("text")
-        .data(piece)
-        .enter()
-        .append("g")
-        .attr("class", function (d) {
-            var dy = d3.select("#" + d.p).attr("y");
-            var dx = d3.select("#" + d.p).attr("x");
-            board.forEach(function (i) {
-                if ((i.x * fieldSize) == dx && (i.y * fieldSize) == dy) {
-                    i.piece = d.n;
-                }
-            })
-            return d.n;
-        })
-        .attr("transform", "translate(0,0)")
-        .on("click", function () { selected = d3.select(this).attr("class") });
-
-    chessPiece.append("text")
-        .style("font-size", function () { return (30 * factor); })
-        .attr("id", function (d) { return d.n; })
-        .attr("text-anchor", "middle")
-        .text(function (d) { return d.c; })
-        .attr("y", function (d) { return +d3.select("#" + d.p).attr("y") + (30 * factor) })
-        .attr("x", function (d) { return +d3.select("#" + d.p).attr("x") + (20 * factor); })
-        .on("mouseover", function(d){d3.select(this).style("cursor", "pointer");})
-        .on("mouseout", function(d){d3.select(this).style("cursor", "default");})
-        .on("click", function () {
-            d3.selectAll("rect").attr("stroke", "none");
-            selectedText = d3.select(this).attr("id");
-            getPiece(selectedText);
-            findPiece(selectedText);
+        .on("click", function(){
+          console.log("Hello");
+          var from = selectedText;
+          var to = d3.select(this).attr("id");
+          chess.move({from: from, to: to});
+          d3.selectAll(".dummy").remove();
+          updatePieceToBoard();
+          makePieces();
         });
-
-    d3.selectAll("rect").attr("click", null);
 }
+
+function makePieces(){
+
+  var chessPiece = d3.select("#chessBoard").selectAll("g")
+      .data(piece)
+      .enter()
+      .append("g")
+      .attr("class", function (d) {
+          var dy = d3.select("#" + d.p).attr("y");
+          var dx = d3.select("#" + d.p).attr("x");
+          board.forEach(function (i) {
+              if ((i.x * fieldSize) == dx && (i.y * fieldSize) == dy) {
+                  i.piece = d.p;
+              }
+          })
+          return "dummy";
+      })
+      .attr("transform", "translate(0,0)")
+      .on("click", function () { selected = d3.select(this).attr("class") });
+
+  chessPiece.append("text")
+      .style("font-size", function () { return (30 * factor); })
+      .attr("id", function (d) { return d.p; })
+      .attr("text-anchor", "middle")
+      .text(function (d) { return d.c; })
+      .attr("y", function (d) { return +d3.select("#" + d.p).attr("y") + (30 * factor) })
+      .attr("x", function (d) { return +d3.select("#" + d.p).attr("x") + (20 * factor); })
+      .on("mouseover", function(d){d3.select(this).style("cursor", "pointer");})
+      .on("mouseout", function(d){d3.select(this).style("cursor", "default");})
+      .on("click", function () {
+          d3.selectAll("rect").attr("stroke", "none");
+          selectedText = d3.select(this).attr("id");
+          // potMoveForSelected = getPotentialMoves(selectedText);
+          updateMoveText(d3.select(this).text());
+      });
+}
+
 
 function moveChessPiece(d){
     findandSetNewPiece(selected, d);
@@ -884,7 +887,7 @@ function createPieChart(list, domain) {
       .attr("stroke", "black")
       .attr("fill", function (d, i) {
       return colorScalePie(i);});
-                          
+
     piecharts.attr("transform", "translate(175, 110)")
     .append("svg:title")
     .text(function(d){return d.data.name  + "\n Instances: " + d.data.v});
@@ -992,7 +995,6 @@ function getMoves(d){
                 distributePotentialMove();
                 searchForMoveForPie();
                 //TODO update everything that needs to be update.
-console.log(getPotentialMoves(piece[20]));
             }
             else{
                 //TODO - shouldn't get here? something about unique game?

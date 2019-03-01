@@ -18,7 +18,7 @@ class moveTree:
 		print("Num Instances = ", self.numInstances)
 		print("Moves size = ", len(self.moves))
 
-    
+
 	def getStatistics(self):
 		r = {}
 		r["name"] = self.name
@@ -105,11 +105,11 @@ def readGame(moveSet):
 
 	if(len(mvList) > 0):
 		addGame(mvList, origin, result)
-def formatReturn(move):	
-	ret = {}	
-	ret["move"] = move.getStatistics()	
-	potMoves = []	
-	for m in move.moves:	
+def formatReturn(move):
+	ret = {}
+	ret["move"] = move.getStatistics()
+	potMoves = []
+	for m in move.moves:
 		potMoves.append(m.getStatistics())
 	ret["potMoves"] = potMoves
 	print(ret)
@@ -133,7 +133,7 @@ for filename in glob.glob('data/*.pgn'):
 		print("numlines:" + str(numlines))
 		for x in range(numlines):
 			readGame(f)
-
+	break
 #origin.printValues()
 
 origin.getStatistics()
