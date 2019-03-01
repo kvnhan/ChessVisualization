@@ -25,6 +25,7 @@ class moveTree:
 		r["whiteW"] = self.whiteW
 		r["blackW"] = self.blackW
 		r["draw"] = self.draws
+		r["numInstances"] = self.numInstances
 		return r
 
 def getNumInstances(tree):
