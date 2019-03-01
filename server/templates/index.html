@@ -515,13 +515,13 @@ function updateMoveList(data){
 
 function updateLineChart(move){
     currentData.potMoves.forEach(function(i){
-        if(i.name == move){
-            var total = i.blackW + i.draw + i.whiteW;
-            var d = (i.draw/total) * 100;
-            var b = (i.blackW/total) * 100;
-            var w = (i.whiteW/total) * 100;
-            xAxis.push({move: move, win: w, lose: b});
-        }
+      if(i.name == move){
+        var total = i.blackW + i.draw + i.whiteW;
+        var d = (i.draw/total) * 100;
+        var b = (i.blackW/total) * 100;
+        var w = (i.whiteW/total) * 100;
+        xAxis.push({move: move, win: w, lose: b, draw: d});
+      }
     });
     d3.select("#svgLine").remove();
     createLineChart();
@@ -560,22 +560,31 @@ function createLineChart(){
             .tickSize(-secViewwidth - 400))
 
     var wincircle = graph.selectAll("wcircle").data(xAxis)
-        .enter()
-        .append("circle")
-        .style("fill", "green")
-        .attr("stroke", "black")
-        .attr("r", 4)
-        .attr("cx", function (d) { return xLineScale(xLineValue(d)); })
-        .attr("cy", function (d) { return yLineScale(d.win) - (100);})
+                          .enter()
+                          .append("circle")
+                          .style("fill", "white")
+                          .attr("stroke", "black")
+                          .attr("r", 4)
+                          .attr("cx", function (d) { return xLineScale(xLineValue(d)); })
+                          .attr("cy", function (d) { return yLineScale(d.win) - (100);})
 
     var losecircle = graph.selectAll("lcircle").data(xAxis)
-        .enter()
-        .append("circle")
-        .style("fill", "red")
-        .attr("stroke", "black")
-        .attr("r", 4)
-        .attr("cx", function (d) { return xLineScale(xLineValue(d)); })
-        .attr("cy", function (d) { return yLineScale(d.lose) - (100);})
+                          .enter()
+                          .append("circle")
+                          .style("fill", "black")
+                          .attr("stroke", "black")
+                          .attr("r", 4)
+                          .attr("cx", function (d) { return xLineScale(xLineValue(d)); })
+                          .attr("cy", function (d) { return yLineScale(d.lose) - (100);})
+
+    var drawcircle = graph.selectAll("dcircle").data(xAxis)
+                          .enter()
+                          .append("circle")
+                          .style("fill", '#ffe332')
+                          .attr("stroke", "black")
+                          .attr("r", 4)
+                          .attr("cx", function (d) { return xLineScale(xLineValue(d)); })
+                          .attr("cy", function (d) { return yLineScale(d.draw) - (100);})
 
     var winline = d3.line()
         .x(function (d) { return xLineScale(xLineValue(d)); })
@@ -586,6 +595,11 @@ function createLineChart(){
         .x(function (d) { return xLineScale(xLineValue(d)); })
         .y(function (d) { return yLineScale(d.lose) - (100);})
         .curve(d3.curveMonotoneX)
+
+    var drawline = d3.line()
+                      .x(function (d) { return xLineScale(xLineValue(d)); })
+                      .y(function (d) { return yLineScale(d.draw) - (100);})
+                      .curve(d3.curveMonotoneX)
 
     var wline = graph.append("path")
         .datum(xAxis)
@@ -598,12 +612,20 @@ function createLineChart(){
     var lline = graph.append("path")
         .datum(xAxis)
         .attr("fill", "none")
-        .attr("stroke", "red")
+        .attr("stroke", "black")
         .attr("stroke-width", 2)
         .attr("class", "loseline")
         .attr("d", loseline);
 
-}
+    var dline = graph.append("path")
+        .datum(xAxis)
+        .attr("fill", "none")
+        .attr("stroke", "#ffe332")
+        .attr("stroke-width", 2)
+        .attr("class", "drawline")
+        .attr("d", drawline);
+
+  }
 
 function createListOfMovesArea(){
 
@@ -744,24 +766,25 @@ function updateBarChart(i){
     yScale.domain(domain);
     widthScale.domain([0, 100]);
     var bar = d3.select("#barg").selectAll("rect.m").data(i)
-        .enter()
-        .append("rect")
-        .style("fill", function (d, i) { return colorScaleBar(i);})
-        .attr("stroke", "black")
-        .attr("id", function (d) {return d.name; })
-        .attr("x", function (d) {
-            return xScale(d.v); })
-        .attr("y", function (d) {
-            //return yScale(name) - 100;
-            return 86;
+      .enter()
+      .append("rect")
+      .style("fill", function (d, i) { return colorScaleBar(i);})
+      .attr("stroke", "black")
+      .attr("id", function (d) {return d.name; })
+      .attr("x", function (d) {
+        return xScale(d.v); })
+      .attr("y", function (d) {
+        //return yScale(name) - 100;
+        return 86;
         })
-        .attr('height', 60)
-        .attr('width', function (d) {
-            return widthScale(d.v);
-        });
-}
+      .attr('height', 60)
+      .attr('width', function (d) {
+        return widthScale(d.v);})
+      .append("svg:title")
+      .text(function(d){return d.name + "\n" + d.v.toFixed(2)});
+  }
 
-function searchForMoveForBar(move){
+  function searchForMoveForBar(move){
     var list = []
     currentData.potMoves.forEach(function(i){
         if(i.name == move){
@@ -853,17 +876,19 @@ function createPieChart(list, domain) {
         .attr("width", ((fieldSize * fieldSize) / 18))
 
     var piecharts = graph.selectAll("path")
-        .data(pie)
-        .enter()
-        .append("path")
-        .attr("d", arc)
-        .attr("id", function (i) { return i.data.name; })
-        .attr("stroke", "black")
-        .attr("fill", function (d, i) {
-            return colorScalePie(i);
-        });
+      .data(pie)
+      .enter()
+      .append("path")
+      .attr("d", arc)
+      .attr("id", function (i) { return i.data.name; })
+      .attr("stroke", "black")
+      .attr("fill", function (d, i) {
+      return colorScalePie(i);});
+                          
     piecharts.attr("transform", "translate(175, 110)")
-}
+    .append("svg:title")
+    .text(function(d){return d.data.name  + "\n Instances: " + d.data.v});
+  }
 
 
 function updateHistory(object){
@@ -912,8 +937,8 @@ function historyTable(){
 
     var header = table.append("tr");
 
-    var th = header.selectAll("th")
-        .data(["Move", "Win%", "Lose%", "Tie%"])
+      var th = header.selectAll("th")
+        .data(["Move", "White%", "Black%", "Draw%"])
         .enter()
         .append("th")
         .append("div")
