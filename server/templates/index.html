@@ -677,7 +677,7 @@
     var xScale = d3.scaleOrdinal().range([0, 2.556 * i[0].v, 2.556 * (i[0].v + i[1].v)]);
     var yScale = d3.scaleBand().range([0, secViewheight - 100]).padding(0.2);
     var widthScale = d3.scaleLinear().range([0, 255.6]);
-    
+
 
     xScale.domain([0, 1, 2]);
     yScale.domain(domain);
@@ -690,16 +690,14 @@
                                 .attr("id", function (d) {return d.name; })
                                 .attr("x", function (d) {
                                   return xScale(d.v); })
-                                .attr("y", function (d) { 
-                                  //return yScale(name) - 100; 
+                                .attr("y", function (d) {
+                                  //return yScale(name) - 100;
                                   return 86;
                                   })
                                 .attr('height', 60)
                                 .attr('width', function (d) {
-                                  return widthScale(d.v); 
-                                  })
-                                .append("svg:title")
-                                .text(function (d){return d.name + "\n" + d.v.toFixed(2)});
+                                  return widthScale(d.v);
+                                  });
   }
 
   function searchForMoveForBar(move){
@@ -757,13 +755,13 @@
     graph.append("g")
           .attr("class", "grid")
           .attr("transform", "translate(0,-100)")
-          .call(d3.axisLeft(yScale) 
+          .call(d3.axisLeft(yScale)
           .ticks(1)
           .tickSize(-secViewwidth - 100));
   }
 
   function updatePiechart(moves, domain){
-    console.log("heloooooo");
+
     d3.select(".piegraph").remove();
     createPieChart(moves, domain);
   }
@@ -852,15 +850,20 @@
                     .style("margin-top", "30px")
                     .style("margin-left", "40px");
 
-    var th = header.selectAll("th")
-                    .data(["Move", "White%", "Black%", "Draw%"])
-                    .enter()
-                    .append("th")
-                    .append("div")
-                    .style("text-align", "left")
-                    .style("padding", "10px")
-                    .text(function(d){return d;});
+      var header = table.append("tr");
 
+      var th = header.selectAll("th")
+                      .data(["Move", "Win%", "Lose%", "Tie%"])
+                      .enter()
+                      .append("th")
+                      .append("div")
+                      .style("text-align", "left")
+                      .style("padding", "10px")
+                      .text(function(d){return d;});
+
+      var bodyView = d3.select("#historyTable").append("tbody")
+                      .attr("id", "tableBody");
+    }
 
 
   function testFunction(d){
@@ -903,16 +906,15 @@
           console.log(currentData)
           distributePotentialMove();
           searchForMoveForPie();
-  //TODO update everything that needs to be update.
+          //TODO update everything that needs to be update.
         }
         else{
-  //TODO - shouldn't get here? something about unique game?
+          //TODO - shouldn't get here? something about unique game?
         }
-    } else {
-  alert("Did not get response, server is down?")
+      } else {
+        alert("Did not get response, server is down?")
       }
     }
   }
-
 </script>
 </html>
