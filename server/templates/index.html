@@ -101,6 +101,8 @@ historyTable();
 function removeFirstLetter(str){
     if(str.length > 2){
         return str.substring(1);
+    }else if(str.length > 3){
+      return str.substring(2);
     }
     return str;
 }
@@ -128,105 +130,36 @@ function findPieceID(name, move){
     })
 }
 
+function updateChart(){
+  searchForMoveForBar(selectedText);
+  updateLineChart(selectedText);
+}
 function cleanPotentialList(){
     piece.forEach(function(i){
         i.op = [];
     })
 }
 
-function distributePotentialMove(){
-    turns++;
-    cleanPotentialList();
-    var tempChess = new Chess();
-    currentData.potMoves.forEach(function(i){
-        if(turns % 2 == 0){
-            tempChess.move("e4");
-            tempChess.turn();
-            tempChess.move(i.name);
-        }else{
-            tempChess.move(i.name);
-            tempChess.turn();
-            tempChess.move("e6");
-        }
-        var p = tempChess.get(removeFirstLetter(i.name));
-        piece.forEach(function(pie){
-            if(p.type.toLowerCase() == pie.id.toLowerCase() && pie.color == p.color){
-                pie.op.push(removeFirstLetter(i.name));
-            }
-        })
-        tempChess.reset();
-    })
-
-}
-function playChess(name, move){
-    piece.forEach(function(i){
-        if(i.n == name){
-            if(i.id == "p"){
-                chess.move(move);
-            }else{
-                chess.move(i.id + move);
-            }
-            //d3.selectAll("rect").on("click", null);
-            chess.turn();
-            moveChessPiece(move);
-            getMoves(chess.history());
-        }
-    })
-}
-
-function updateBoard(premove, move){
-    var formattedMove;
-    var unicode;
-    var validMove = chess.get(move); // Return {type: ..., color: ...}
-    console.log(chess.ascii());
-    console.log(validMove);
-    piece.forEach(function(i){
-        if(i.id.toLowerCase() == validMove.type.toLowerCase() && i.color == validMove.color){
-            if(i.prev == premove){
-                formattedMove = i.d + move;
-                unicode = i.c;
-                d3.select("." + i.n).remove();
-                // Remove a piece
-                var dx = d3.select("#" + move).attr("x");
-                var dy = d3.select("#" + move).attr("y");
-                // Move it to this new loc
-                var newPiece = d3.select("#chessBoard")
-                    .append("g")
-                    .attr("class", i.n);
-
-                newPiece.append("text")
-                    .style("font-size", function () { return (30 * factor);})
-                    .attr("id", i.n)
-                    .attr("text-anchor", "middle")
-                    .attr("x", (20 * factor))
-                    .attr("y", (30 * factor))
-                    .text(unicode)
-                    .on("mouseover", function(d){d3.select(this).style("cursor", "pointer");})
-                    .on("mouseout", function(d){d3.select(this).style("cursor", "default");});
-
-                newPiece.attr("transform", "translate(" + dx + ", " + dy + ")");
-            }
-        }
-    })
-}
-
-function createPiece(piece){
-    var chess = d3.select("");
-}
-
-function hightlightSquare(listOfMove){
+function hightlightSquare(){
+    var list = getPotentialMoves(selectedText);
     d3.selectAll("#copy").remove();
-    piece.forEach(function(i){
-        if(selectedText == i.n){
-            listOfMove.forEach(function(i){
-                var str = removeFirstLetter(i);
-                d3.select("#" + str).attr("stroke", "red")
+    list.forEach(function(i){
+      var str = removeFirstLetter(i);
+      console.log(str);
+      d3.select("#" + str).attr("stroke", "red")
                     .attr("stroke-width", 3)
                     .on("click", function () {
                         d3.selectAll("rect").attr("stroke", "none");
+                        var from = selectedText;
+                        var to = d3.select(this).attr("id");
+                        chess.move({from: from, to: to});
+                        d3.selectAll(".dummy").remove();
+                        updatePieceToBoard();
+                        makePieces();
+                        updateChart();
+                        getMoves(chess.history());
                     });
-            })
-        }
+
     })
 }
 
@@ -321,9 +254,9 @@ function getPotentialMoves(p){
             console.log("here")
             var y;
             for(y = 0; y < potMov.length; y++){
-                console.log(chess.moves()[x])
-                console.log(allMov[x]["to"])
-                console.log(potMov[y])
+                // console.log(chess.moves()[x])
+                // console.log(allMov[x]["to"])
+                // console.log(potMov[y])
                 if(potMov[y]["name"] ==chess.moves()[x]){
                     ret.push(chess.moves()[x]);
                     break;
@@ -429,8 +362,8 @@ function makePieces(){
       .on("click", function () {
           d3.selectAll("rect").attr("stroke", "none");
           selectedText = d3.select(this).attr("id");
-          // potMoveForSelected = getPotentialMoves(selectedText);
           updateMoveText(d3.select(this).text());
+          hightlightSquare();
       });
 }
 
@@ -992,7 +925,6 @@ function getMoves(d){
             if(xhr.responseText != "404, tree not found"){
                 currentData = JSON.parse(xhr.responseText.replace(/\'/g,"\""))
                 console.log(currentData)
-                distributePotentialMove();
                 searchForMoveForPie();
                 //TODO update everything that needs to be update.
             }
