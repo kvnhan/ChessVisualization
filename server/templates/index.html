@@ -1,218 +1,196 @@
 <!DOCTYPE html>
 <html>
-<style>
-  .container1 {
+    <style>
+.container1 {
     float: left;
-  }
+}
 
   .container2 {
-    float: right;
+      float: right;
   }
 
   .container1.5 {
-    margin-right: auto;
-    margin-left: auto;
+      margin-right: auto;
+      margin-left: auto;
   }
 
   #fourthView th div{
-    position: absolute;
-    margin-top: -31px;
-    background-color: white;
+      position: absolute;
+      margin-top: -31px;
+      background-color: white;
   }
 
   #fourthView table {
-    border-collapse: collapse;
+      border-collapse: collapse;
   }
 
   #fourthView tbody {
-    border-top: 15px solid transparent;
+      border-top: 15px solid transparent;
   }
 
   .selected{
-    opacity: 0.5;
+      opacity: 0.5;
   }
-</style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.2/chess.js"></script>
-<script src="https://d3js.org/d3.v5.min.js"></script>
-<head>
-</head>
-<body>
-  <div class="container1" id="chart1"></div>
-  <div class="container1.5" id="centerArea"></div>
-  <div class="container2" id="chart2"></div>
-</body>
-<script>
-  var chess = new Chess();
-  var moves = [];
-  var currentData;
-  var turns = 0;
-  var potentialMove = {'potMoves':
-  [{'draws': 4609, 'whiteW': 3687, 'blackW': 2555, 'name': 'e4', 'numInstances': 10851},
-  {'draws': 3922, 'blackW': 2570, 'whiteW': 1815, 'name': 'd4', 'numInstances': 8307},
-  {'draws': 756, 'blackW': 554, 'whiteW': 341, 'name': 'c4', 'numInstances': 1651},
-  {'draws': 1281, 'blackW': 1003, 'whiteW': 672, 'name': 'Nf3', 'numInstances': 2956},
-  {'draws': 34, 'blackW': 47, 'whiteW': 41, 'name': 'b3', 'numInstances': 122},
-  {'draws': 0, 'blackW': 1, 'whiteW': 1, 'name': 'c3', 'numInstances': 2},
-  {'draws': 7, 'blackW': 7, 'whiteW': 8, 'name': 'Nc3', 'numInstances': 22},
-  {'draws': 36, 'blackW': 41, 'whiteW': 31, 'name': 'g3', 'numInstances': 108},
-  {'draws': 7, 'blackW': 15, 'whiteW': 10, 'name': 'f4', 'numInstances': 32},
-  {'draws': 4, 'blackW': 2, 'whiteW': 3, 'name': 'e3', 'numInstances': 9},
-  {'draws': 0, 'blackW': 4, 'whiteW': 0, 'name': 'a4', 'numInstances': 4},
-  {'draws': 1, 'blackW': 1, 'whiteW': 7, 'name': 'b4', 'numInstances': 9},
-  {'draws': 0, 'blackW': 1, 'whiteW': 2, 'name': 'g4', 'numInstances': 3},
-  {'draws': 1, 'blackW': 2, 'whiteW': 0, 'name': 'd3', 'numInstances': 3},
-  {'draws': 2, 'blackW': 2, 'whiteW': 2, 'name': 'a3', 'numInstances': 6},
-  {'draws': 0, 'blackW': 1, 'whiteW': 0, 'name': 'Na3', 'numInstances': 1},
-  {'draws': 1, 'blackW': 0, 'whiteW': 1, 'name': 'f3', 'numInstances': 2},
-  {'draws': 0, 'blackW': 1, 'whiteW': 0, 'name': 'Nh3', 'numInstances': 1},
-  {'draws': 0, 'blackW': 1, 'whiteW': 0, 'name': 'h3', 'numInstances': 1}],
-  'move': {'draws': 10661, 'blackW': 7940, 'whiteW': 5489, 'name': 'origin', 'numInstances': 24090}}
-
-  var tableList = [];
-  var url = "http://ashaji.dyn.wpi.edu:5000"
-  var board = [];
-  var xAxis = [];
-  var colorScaleBar = d3.scaleOrdinal()
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.2/chess.js"></script>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <head>
+    </head>
+    <body>
+        <div class="container1" id="chart1"></div>
+        <div class="container1.5" id="centerArea"></div>
+        <div class="container2" id="chart2"></div>
+    </body>
+    <script>
+        var chess = new Chess();
+var moves = [];
+var currentData;
+var turns = 0;
+var tableList = [];
+var url = "http://ashaji.dyn.wpi.edu:5000"
+var board = [];
+var xAxis = [];
+var colorScaleBar = d3.scaleOrdinal()
     .domain([0, 1, 2])
     .range(['#ffffff', '#ffe332', '#000000']);
-  var colorScalePie = d3.scaleOrdinal(d3.schemeDark2);
-  var domainData = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"];
-  var nextMove = [{ m: "D2", bw: 33, ww: 40, t: 33 }, { m: "C2", bw: 15, ww: 80, t: 5 }, { m: "D8", bw: 5, ww: 75, t: 20 }];
-  var firstView, secondView, thirdView, fourthView;
-  var posChar = ["h", "g", "f", "e", "d", "c", "b", "a"]
-  var count = 8;
-  var factor = 2;
-  var tempCount = 8;
-  var lastChar = "a";
-  var colCount = 1;
-  var pieceCount = 0;
-  var index = 0;
-  var div;
-  var svg;
-  var selected;
-  var selectedPiece;
-  var selectedText;
-  var dy = 35;
-  var dx = 20;
-  var piece;
-  var marginTop = 30,
-  marginLeft = 30,
-  fieldSize = 40 * factor,
-  boardDimension = 8,
-  boardSize = boardDimension * fieldSize;
-  var selectedBlackPiece;
-  var xLineValue;
-  var xLineScale;
-  var yLineScale;
+var colorScalePie = d3.scaleOrdinal(d3.schemeDark2);
+var domainData = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"];
+var nextMove = [{ m: "D2", bw: 33, ww: 40, t: 33 }, { m: "C2", bw: 15, ww: 80, t: 5 }, { m: "D8", bw: 5, ww: 75, t: 20 }];
+var firstView, secondView, thirdView, fourthView;
+var posChar = ["h", "g", "f", "e", "d", "c", "b", "a"]
+var count = 8;
+var factor = 2;
+var tempCount = 8;
+var lastChar = "a";
+var colCount = 1;
+var pieceCount = 0;
+var index = 0;
+var div;
+var svg;
+var selected;
+var selectedPiece;
+var selectedText;
+var dy = 35;
+var dx = 20;
+var piece;
+var marginTop = 30,
+    marginLeft = 30,
+    fieldSize = 40 * factor,
+    boardDimension = 8,
+    boardSize = boardDimension * fieldSize;
+var selectedBlackPiece;
+var xLineValue;
+var xLineScale;
+var yLineScale;
 
 
-  getMoves([])
-  parseJson();
-  makeChessBoard();
-  setUpMutiWindow();
-  setMoveText();
-  createListOfMovesArea();
-  createBarChart();
-  createLineChart();
-  historyTable();
+getMoves([])
+updatePieceToBoard();
+makeChessBoard();
+setUpMutiWindow();
+setMoveText();
+createListOfMovesArea();
+createBarChart();
+createLineChart();
+historyTable();
 
-  function removeFirstLetter(str){
+function removeFirstLetter(str){
     if(str.length > 2){
-      return str.substring(1);
+        return str.substring(1);
     }
     return str;
-  }
-  function getMoveNum(str){
+}
+function getMoveNum(str){
     return str[str.length -1];
-  }
-  function removeLastChar(str){
-      return str.substring(0, str.length - 1);
-  }
+}
+function removeLastChar(str){
+    return str.substring(0, str.length - 1);
+}
 
-  function findPieceID(name, move){
+function findPieceID(name, move){
     var newId;
     console.log(name);
     piece.forEach(function(i){
-      if(name == i.n){
-        if(i.id == "p"){
-            newId = move;
-        }else{
-          newId = i.id + move;
+        if(name == i.n){
+            if(i.id == "p"){
+                newId = move;
+            }else{
+                newId = i.id + move;
+            }
+            searchForMoveForBar(newId);
+            updateLineChart(newId);
+            updateHistory(newId);
         }
-        searchForMoveForBar(newId);
-        updateLineChart(newId);
-        updateHistory(newId);
-      }
     })
-  }
+}
 
-  function cleanPotentialList(){
+function cleanPotentialList(){
     piece.forEach(function(i){
-      i.op = [];
+        i.op = [];
     })
-  }
+}
 
-  function distributePotentialMove(){
+function distributePotentialMove(){
     turns++;
     cleanPotentialList();
     var tempChess = new Chess();
     currentData.potMoves.forEach(function(i){
-      if(turns % 2 == 0){
-        tempChess.move("e4");
-        tempChess.turn();
-        tempChess.move(i.name);
-      }else{
-        tempChess.move(i.name);
-        tempChess.turn();
-        tempChess.move("e6");
-      }
-      var p = tempChess.get(removeFirstLetter(i.name));
-      piece.forEach(function(pie){
-        if(p.type.toLowerCase() == pie.id.toLowerCase() && pie.color == p.color){
-          pie.op.push(removeFirstLetter(i.name));
-        }
-      })
-      tempChess.reset();
-    })
-
-  }
-  function playChess(name, move){
-    piece.forEach(function(i){
-      if(i.n == name){
-        if(i.id == "p"){
-          chess.move(move);
+        if(turns % 2 == 0){
+            tempChess.move("e4");
+            tempChess.turn();
+            tempChess.move(i.name);
         }else{
-          chess.move(i.id + move);
+            tempChess.move(i.name);
+            tempChess.turn();
+            tempChess.move("e6");
         }
-        //d3.selectAll("rect").on("click", null);
-        chess.turn();
-        moveChessPiece(move);
-        getMoves(chess.history());
-      }
+        var p = tempChess.get(removeFirstLetter(i.name));
+        piece.forEach(function(pie){
+            if(p.type.toLowerCase() == pie.id.toLowerCase() && pie.color == p.color){
+                pie.op.push(removeFirstLetter(i.name));
+            }
+        })
+        tempChess.reset();
     })
-  }
 
-  function updateBoard(premove, move){
-      var formattedMove;
-      var unicode;
-      var validMove = chess.get(move); // Return {type: ..., color: ...}
-      console.log(chess.ascii());
-      console.log(validMove);
-      piece.forEach(function(i){
+}
+function playChess(name, move){
+    piece.forEach(function(i){
+        if(i.n == name){
+            if(i.id == "p"){
+                chess.move(move);
+            }else{
+                chess.move(i.id + move);
+            }
+            //d3.selectAll("rect").on("click", null);
+            chess.turn();
+            moveChessPiece(move);
+            getMoves(chess.history());
+        }
+    })
+}
+
+function updateBoard(premove, move){
+    var formattedMove;
+    var unicode;
+    var validMove = chess.get(move); // Return {type: ..., color: ...}
+    console.log(chess.ascii());
+    console.log(validMove);
+    piece.forEach(function(i){
         if(i.id.toLowerCase() == validMove.type.toLowerCase() && i.color == validMove.color){
-          if(i.prev == premove){
-            formattedMove = i.d + move;
-            unicode = i.c;
-            d3.select("." + i.n).remove();
-            // Remove a piece
-            var dx = d3.select("#" + move).attr("x");
-            var dy = d3.select("#" + move).attr("y");
-            // Move it to this new loc
-            var newPiece = d3.select("#chessBoard")
-                              .append("g")
-                              .attr("class", i.n);
+            if(i.prev == premove){
+                formattedMove = i.d + move;
+                unicode = i.c;
+                d3.select("." + i.n).remove();
+                // Remove a piece
+                var dx = d3.select("#" + move).attr("x");
+                var dy = d3.select("#" + move).attr("y");
+                // Move it to this new loc
+                var newPiece = d3.select("#chessBoard")
+                    .append("g")
+                    .attr("class", i.n);
 
-            newPiece.append("text")
+                newPiece.append("text")
                     .style("font-size", function () { return (30 * factor);})
                     .attr("id", i.n)
                     .attr("text-anchor", "middle")
@@ -222,698 +200,749 @@
                     .on("mouseover", function(d){d3.select(this).style("cursor", "pointer");})
                     .on("mouseout", function(d){d3.select(this).style("cursor", "default");});
 
-          newPiece.attr("transform", "translate(" + dx + ", " + dy + ")");
-           }
+                newPiece.attr("transform", "translate(" + dx + ", " + dy + ")");
+            }
         }
-      })
-  }
+    })
+}
 
-  function createPiece(piece){
-      var chess = d3.select("");
-  }
+function createPiece(piece){
+    var chess = d3.select("");
+}
 
-  function hightlightSquare(listOfMove){
+function hightlightSquare(listOfMove){
     d3.selectAll("#copy").remove();
     piece.forEach(function(i){
-      if(selectedText == i.n){
-        listOfMove.forEach(function(i){
-          var str = removeFirstLetter(i);
-          d3.select("#" + str).attr("stroke", "red")
-                              .attr("stroke-width", 3)
-                              .on("click", function () {
-                                d3.selectAll("rect").attr("stroke", "none");
-                                findPieceID(selected, d3.select(this).attr("id"));
-                                playChess(selected, d3.select(this).attr("id"));
-                                d3.selectAll("rect").attr("click", null);
-                              });
-                            })
-                          }
-                        })
-  }
-
-  function parseJson() {
-    piece = [{ n: "bRook1",prev: "", p: "a8", c: "\u265C" , id: "R", color: "b", op:[]},
-    { n: "bKing", prev: "", p: "d8", c: "\u265A" , id: "K", color: "b", op:[]}, { n: "bQueen", prev: "", p: "e8", c: "\u265B" , id: "Q", color: "b", op:[]},
-    { n: "bKnight1", prev: "", p: "b8", c: "\u265E" , id: "N", color: "b", op:[]}, { n: "bBishop1", prev: "", p: "c8", c: "\u265D" , id: "B", color: "b", op:[]},
-    { n: "bBishop2", prev: "", p: "f8", c: "\u265D" , id: "B", color: "b", op:[]}, { n: "bKnight2", prev: "", p: "g8", c: "\u265E" , id: "N", color: "b", op:[]},
-    { n: "bRook2", prev: "", p: "h8", c: "\u265C" , id: "R", color: "b", op:[]}, { n: "bPawn1", prev: "", p: "a7", c: "\u265F" , id: "p", color: "b", op:[]},
-    { n: "bPawn6", prev: "", p: "f7", c: "\u265F" , id: "p", color: "b", op:[]}, { n: "bPawn7", prev: "", p: "g7", c: "\u265F" , id: "p", color: "b", op:[]},
-    { n: "bPawn2", prev: "", p: "b7", c: "\u265F" , id: "p", color: "b", op:[]}, { n: "bPawn3", prev: "", p: "c7", c: "\u265F" , id: "p", color: "b", op:[]},
-    { n: "bPawn4", prev: "", p: "d7", c: "\u265F" , id: "p", color: "b", op:[]}, { n: "bPawn5", prev: "", p: "e7", c: "\u265F" , id: "p", color: "b", op:[]},
-    { n: "bPawn8", prev: "", p: "h7", c: "\u265F" , id: "p", color: "b", op:[]},
-    { n: "wPawn1", prev: "", p: "a2", c: "\u2659" , id: "p", color: "w", op:[]},
-    { n: "wPawn2", prev: "", p: "b2", c: "\u2659" , id: "p", color: "w" , op:[]},
-    { n: "wPawn3", prev: "", p: "c2", c: "\u2659" , id: "p", color: "w", op:[]},
-    { n: "wPawn4", prev: "", p: "d2", c: "\u2659" , id: "p", color: "w", op:[]},
-    { n: "wPawn5", prev: "", p: "e2", c: "\u2659" , id: "p", color: "w", op:[]},
-    { n: "wPawn6", prev: "", p: "f2", c: "\u2659" , id: "p", color: "w", op:[]},
-    { n: "wPawn7", prev: "", p: "g2", c: "\u2659" , id: "p", color: "w", op:[]},
-    { n: "wPawn8", prev: "", p: "h2", c: "\u2659" , id: "p", color: "w", op:[]},
-    { n: "wRook1", prev: "", p: "a1", c: "\u2656" , id: "R", color: "w", op:[]},
-    { n: "wKnight1", prev: "", p: "b1", c: "\u2658" , id: "N", color: "w", op:[]},
-    { n: "wBishop1", prev: "", p: "c1", c: "\u2657" , id: "B", color: "w", op:[]},
-    { n: "wKing", prev: "", p: "d1", c: "\u2654" , id: "K", color: "w", op:[]}, { n: "wQueen", prev: "", p: "e1", c: "\u2655", id: "Q" , color: "w", op:[]},
-    { n: "wBishop2", prev: "", p: "f1", c: "\u2657" , id: "B", color: "w", op:[]}, { n: "wKnight2", prev: "", p: "g1", c: "\u2658" , id: "N", color: "w", op:[]},
-    { n: "wRook2", prev: "", p: "h1", c: "\u2656" , id: "R", color: "w", op:[]}];
-
-  }
-  // Code taken and modified from: https://codepen.io/VividD/pen/bNgGKP
-  function makeChessBoard() {
-
-    for (var i = 0; i < boardDimension * boardDimension; i++) {
-      board.push({
-        x: i % boardDimension,
-        y: Math.floor(i / boardDimension),
-        piece: 0
-      });
-    };
-
-    div = d3.select("#chart1")
-    .style("height", ((fieldSize * fieldSize) / 10) + "px")
-    .style("width", ((fieldSize * fieldSize) / 10) + "px")
-    .append("div");
-
-
-    svg = div.append("svg")
-    .attr("width", boardSize + "px")
-    .attr("height", boardSize + "px")
-    .append("g")
-    .attr("id", "chessBoard");
-
-    svg.selectAll("rect")
-      .data(board)
-      .enter()
-      .append("rect")
-      .attr("id", function () {
-        count--;
-        var tCount = count;
-        var tCol = tempCount;
-        if (count == 0) {
-          tempCount--;
-          count = 8;
+        if(selectedText == i.n){
+            listOfMove.forEach(function(i){
+                var str = removeFirstLetter(i);
+                d3.select("#" + str).attr("stroke", "red")
+                    .attr("stroke-width", 3)
+                    .on("click", function () {
+                        d3.selectAll("rect").attr("stroke", "none");
+                        findPieceID(selected, d3.select(this).attr("id"));
+                        playChess(selected, d3.select(this).attr("id"));
+                        d3.selectAll("rect").attr("click", null);
+                    });
+            })
         }
-        return posChar[tCount] + (tCol);
-      })
-      .attr("x", function (d) {
-        return d.x * fieldSize;
-      })
-      .attr("y", function (d) {
-        return d.y * fieldSize;
-      })
-      .attr("width", fieldSize + "px")
-      .attr("height", fieldSize + "px")
-      .style("fill", function (d) {
-        if (((d.x % 2 == 0) && (d.y % 2 == 0)) ||
-            ((d.x % 2 == 1) && (d.y % 2 == 1)))
-            return "beige";
-            else
-            return "tan";
-          })
-      .attr("opacity", 0.6)
-      // .on("click", function(){
-      //   findPieceID(selected, d3.select(this).attr("id"));
-      //   playChess(selected, d3.select(this).attr("id"));
-      // });
-
-      var chessPiece = svg.selectAll("text")
-                          .data(piece)
-                          .enter()
-                          .append("g")
-                          .attr("class", function (d) {
-                            var dy = d3.select("#" + d.p).attr("y");
-                            var dx = d3.select("#" + d.p).attr("x");
-                            board.forEach(function (i) {
-                              if ((i.x * fieldSize) == dx && (i.y * fieldSize) == dy) {
-                                i.piece = d.n;
-                              }
-                            })
-                            return d.n;
-                          })
-                          .attr("transform", "translate(0,0)")
-                          .on("click", function () { selected = d3.select(this).attr("class") });
-
-      chessPiece.append("text")
-                .style("font-size", function () { return (30 * factor); })
-                .attr("id", function (d) { return d.n; })
-                .attr("text-anchor", "middle")
-                .text(function (d) { return d.c; })
-                .attr("y", function (d) { return +d3.select("#" + d.p).attr("y") + (30 * factor) })
-                .attr("x", function (d) { return +d3.select("#" + d.p).attr("x") + (20 * factor); })
-                .on("mouseover", function(d){d3.select(this).style("cursor", "pointer");})
-                .on("mouseout", function(d){d3.select(this).style("cursor", "default");})
-                .on("click", function () {
-                  d3.selectAll("rect").attr("stroke", "none");
-                  selectedText = d3.select(this).attr("id");
-                  getPiece(selectedText);
-                  findPiece(selectedText);
-                });
-
-      d3.selectAll("rect").attr("click", null);
-    }
-
-  function moveChessPiece(d){
-    findandSetNewPiece(selected, d);
-    findCurrentLoc(d);
-  }
-
-  function findCurrentLoc(move){
-    piece.forEach(function(i){
-      if(selected == i.n){
-        updateBoard(i.prev, move);
-      }
     })
-  }
-  function listPotentialMoves(op){
-    d3.select("#listDiv").remove();
-    hightlightSquare(op);
-    createListOfMovesArea();
-    updateMoveList(op);
-  }
+}
 
-  function findPiece(pieceName){
-    piece.forEach(function (i) {
-      if (pieceName == i.n) {
-        var op = i.op;
-        listPotentialMoves(op)
-      }
-    })
-  }
+function updatePieceToBoard() {
 
-  function getPiece(pieceName){
-    piece.forEach(function (i) {
-      if (pieceName == i.n) {
-        updateMoveText(i.c);
-      }
-    })
-  }
-  function findandSetNewPiece(pieceName, newLoc) {
-    piece.forEach(function (i) {
-      if (pieceName == i.n) {
-        i.prev = i.p;
-        i.p = newLoc;
-        i.op = [];
-      }
-    })
-  }
+    var b = chess.SQUARES;
+    console.log(b)
+    piece = []
+    var x;
+    var y;
+    for(x = 0; x < 8; x++ ){
+                                for(y = 0; y<8; y++){
+                                p = chess.get(b[x*8+y]);
+                                if(p !=  null){
+                                    t = {}
+                                    t["id"] = p["type"]
+                                    t["p"] = b[x*8+y]
+                                    t["color"] = p["color"]
+                                    switch(t["id"]){
+                                    case "r":
+                                        if(t["color"] == "b"){
+                                            t["c"] =  "\u265C"
+                                        }
+                                        else{
+                                            t["c"] =  "\u2656"
+                                        }
+                                            break;
+                                    case "n":
+                                        if(t["color"] == "b"){
+                                            t["c"] =  "\u265E"
+                                        }
+                                        else{
+                                            t["c"] =  "\u2658"
+                                        }
+                                            break;
+                                    case "b":
+                                        if(t["color"] == "b"){
+                                            t["c"] =  "\u265D"
+                                        }
+                                        else{
+                                            t["c"] =  "\u2657"
+                                        }
+                                            break;
+                                    case "q": 
+                                        if(t["color"] == "b"){
+                                            t["c"] =  "\u265E"
+                                        }
+                                        else{
+                                            t["c"] =  "\u2655"
+                                        }
+                                            break;
+                                    case "k":
+                                        if(t["color"] == "b"){
+                                            t["c"] =  "\u265A"
+                                        }
+                                        else{
+                                            t["c"] =  "\u2654"
+                                        }
+                                            break;
+                                    case "p":
+                                        if(t["color"] == "b"){
+                                            t["c"] =  "\u265F"
+                                        }
+                                        else{
+                                            t["c"] =  "\u2659"
+                                        }
+                                            break;
+                                    default:
+                                            console.log(t["p"] + t["color"])
+                                            break;
 
-  function updateMoveText(s){
-    d3.select("#pp").text(s);
-  }
-
-  function updateMoveList(data){
-
-    var listOfMoves = d3.select("#listBox");
-    listOfMoves.selectAll("moveList").data(data).enter()
-                                    .append("p")
-                                    .attr("id", function(d){return d;})
-                                    .style("display", "inline-block")
-                                    .style("margin-right", "10px")
-                                    .style("margin-top", "-5px")
-                                    .style("font-size", "14px")
-                                    .style("background-color", "lightgrey")
-                                    .style("border", "1px solid black")
-                                    .style("border-radius", "5px")
-                                    .text(function(d){return removeFirstLetter(d);})
-                                    .on("click", function(){
-                                      var d = d3.select(this).attr("id");
-                                      //d3.selectAll("rect").attr("stroke", "none");
-                                      var dx = d3.select("#" + d).attr("x");
-                                      var dy = d3.select("#" + d).attr("y");
-                                      var thisPiece = d3.select("." + selected);
-                                      var thisPieceX = d3.select("#" + selectedText).attr("x", (20 * factor));
-                                      var thisPieceY = d3.select("#" + selectedText).attr("y", (30 * factor));
-                                      findPieceID(selected, d);
-                                      thisPiece.attr("transform", "translate(" + (dx) + ", " + (dy) + ")");
-                                      //d3.selectAll("rect").on("click", null);
-                                      findandSetNewPiece(selectedText, d)})
-                                    .on("mouseover", function(d){d3.select(this).style("cursor", "pointer");
-                                      d3.select(this).classed("selected", true);})
-                                    .on("mouseout", function(d){d3.select(this).style("cursor", "default");
-                                      d3.select(this).classed("selected", false);});
                                     }
+                                    piece.push(t)                      
+                                }
+                                }
 
-  function updateLineChart(move){
-    currentData.potMoves.forEach(function(i){
-      if(i.name == move){
-        var total = i.blackW + i.draw + i.whiteW;
-        var d = (i.draw/total) * 100;
-        var b = (i.blackW/total) * 100;
-        var w = (i.whiteW/total) * 100;
-        xAxis.push({move: move, win: w, lose: b});
-      }
-    });
-    d3.select("#svgLine").remove();
-    createLineChart();
-  }
+                                }
+                                console.log(piece)
 
-  function createLineChart(){
+                                }
+                                // Code taken and modified from: https://codepen.io/VividD/pen/bNgGKP
+                                function makeChessBoard() {
 
-    var svg = d3.select("#thirdView").append("svg")
-                                    .attr("id", "svgLine")
-                                    .attr("height", ((fieldSize * fieldSize) / 30))
-                                    .attr("width", ((fieldSize * fieldSize) / 8.7))
+                                for (var i = 0; i < boardDimension * boardDimension; i++) {
+                                board.push({
+                                x: i % boardDimension,
+                                y: Math.floor(i / boardDimension),
+                                piece: 0
+                                });
+                                };
 
-    var graph = svg.append("g")
-                    .attr("id", "lineChart")
-                    .attr("transform", "translate(100, 0)");
-
-    var secViewwidth = ((fieldSize * fieldSize) / 18) - 200;
-    var secViewheight = ((fieldSize * fieldSize) / 30) - 31;
-    xLineValue = function(d) { return d.move;};
-    xLineScale = d3.scalePoint().range([5, secViewwidth + 400]);
-    yLineScale = d3.scaleLinear().range([300, secViewheight - 50]);
-
-    xLineScale.domain(xAxis.map(xLineValue));
-    yLineScale.domain([0, 100]);
-
-    graph.append("g")
-        .attr("id", "xLineAxis")
-        .attr("transform", "translate(0,200)")
-        .call(d3.axisBottom(xLineScale)
-        .tickSize(0));
-
-    graph.append("g")
-        .attr("id", "grid")
-        .attr("transform", "translate(0,-100)")
-        .call(d3.axisLeft(yLineScale)
-        .tickSize(-secViewwidth - 400))
-
-    var wincircle = graph.selectAll("wcircle").data(xAxis)
-                          .enter()
-                          .append("circle")
-                          .style("fill", "green")
-                          .attr("stroke", "black")
-                          .attr("r", 4)
-                          .attr("cx", function (d) { return xLineScale(xLineValue(d)); })
-                          .attr("cy", function (d) { return yLineScale(d.win) - (100);})
-
-    var losecircle = graph.selectAll("lcircle").data(xAxis)
-                          .enter()
-                          .append("circle")
-                          .style("fill", "red")
-                          .attr("stroke", "black")
-                          .attr("r", 4)
-                          .attr("cx", function (d) { return xLineScale(xLineValue(d)); })
-                          .attr("cy", function (d) { return yLineScale(d.lose) - (100);})
-
-    var winline = d3.line()
-                    .x(function (d) { return xLineScale(xLineValue(d)); })
-                    .y(function (d) { return yLineScale(d.win) - (100);})
-                    .curve(d3.curveMonotoneX)
-
-    var loseline = d3.line()
-                      .x(function (d) { return xLineScale(xLineValue(d)); })
-                      .y(function (d) { return yLineScale(d.lose) - (100);})
-                      .curve(d3.curveMonotoneX)
-
-    var wline = graph.append("path")
-                    .datum(xAxis)
-                    .attr("fill", "none")
-                    .attr("stroke", "green")
-                    .attr("class", "wline")
-                    .attr("stroke-width", 2)
-                    .attr("d", winline);
-
-    var lline = graph.append("path")
-                    .datum(xAxis)
-                    .attr("fill", "none")
-                    .attr("stroke", "red")
-                    .attr("stroke-width", 2)
-                    .attr("class", "loseline")
-                    .attr("d", loseline);
-
-  }
-
-  function createListOfMovesArea(){
-
-    var listView =  d3.select("#thirdandhalfView").append("div")
-                      .attr("id", "listDiv")
-                      .style("height", ((fieldSize * fieldSize) / 40) + "px")
-                      .style("width", ((fieldSize * fieldSize) / 36) + 20 + "px")
-                      .style("float", "right");
-    var lom = listView.append("p")
-                      .attr("id", "moveText")
-                      .style("font-size", "123%")
-                      .style("margin-top", "12px")
-                      .text("List of Next Moves");
-
-    var listBox = listView.append("div")
-                          .style("width", ((fieldSize * fieldSize) / 36) + "px")
-                          .attr("id", "listBox")
-                          .style("height", "65%")
-                          .style("word-wrap", "break-word")
-                          .style("overflow-y", "auto");
-
-  }
-
-  function setMoveText(){
-    var v =  d3.select("#thirdandhalfView").append("div")
-                                          .style("height", ((fieldSize * fieldSize) / 40) + "px")
-                                          .style("width", ((fieldSize * fieldSize) / 36) - 20 + "px")
-                                          .style("float", "left");
-
-    var view = v.append("svg")
-                .attr("height", ((fieldSize * fieldSize) / 40))
-                .attr("width", ((fieldSize * fieldSize) / 36));
+                                div = d3.select("#chart1")
+                                .style("height", ((fieldSize * fieldSize) / 10) + "px")
+                                .style("width", ((fieldSize * fieldSize) / 10) + "px")
+                                .append("div");
 
 
-    var textMove = view.append("text")
-                      .attr("id", "moveText")
-                      .attr("font-size", 20)
-                      .attr("transform", "translate(30, 30)")
-                      .text("Current Piece");
+                                svg = div.append("svg")
+                                .attr("width", boardSize + "px")
+                                .attr("height", boardSize + "px")
+                                .append("g")
+                                .attr("id", "chessBoard");
 
-    var moveBox = view.append("rect")
-                      .attr("id", "pieceBox")
-                      .attr("height", 70)
-                      .attr("width", 70)
-                      .attr("x", 45)
-                      .attr("stroke", "black")
-                      .attr("y", 55)
-                      .attr("fill", "lightgrey")
-                      .attr("opacity", 0.4);
+                                svg.selectAll("rect")
+                                .data(board)
+                                .enter()
+                                .append("rect")
+                                .attr("id", function () {
+                                count--;
+                                var tCount = count;
+                                var tCol = tempCount;
+                                if (count == 0) {
+                                tempCount--;
+                                count = 8;
+                                }
+                                return posChar[tCount] + (tCol);
+                                })
+                                .attr("x", function (d) {
+                                return d.x * fieldSize;
+                                })
+                                .attr("y", function (d) {
+                                return d.y * fieldSize;
+                                })
+                                .attr("width", fieldSize + "px")
+                                .attr("height", fieldSize + "px")
+                                .style("fill", function (d) {
+                                if (((d.x % 2 == 0) && (d.y % 2 == 0)) ||
+                                ((d.x % 2 == 1) && (d.y % 2 == 1)))
+                                return "beige";
+                                else
+                                return "tan";
+                                })
+                                .attr("opacity", 0.6)
+                                // .on("click", function(){
+                                //   findPieceID(selected, d3.select(this).attr("id"));
+                                //   playChess(selected, d3.select(this).attr("id"));
+                                // });
 
-    var pieceBox = view.append("text")
-                        .attr("x", function () { return +d3.select("#pieceBox").attr("x") + 35})
-                        .attr("y", function () { return +d3.select("#pieceBox").attr("y") + 55})
-                        .attr("text-anchor", "middle")
-                        .attr("id", "pp")
-                        .attr("font-size", 60)
-                        .text("");
-  }
+                                var chessPiece = svg.selectAll("text")
+                                .data(piece)
+                                .enter()
+                                .append("g")
+                                .attr("class", function (d) {
+                                var dy = d3.select("#" + d.p).attr("y");
+                                var dx = d3.select("#" + d.p).attr("x");
+                                board.forEach(function (i) {
+                                if ((i.x * fieldSize) == dx && (i.y * fieldSize) == dy) {
+                                i.piece = d.n;
+                                }
+                                })
+                                return d.n;
+                                })
+                                .attr("transform", "translate(0,0)")
+                                .on("click", function () { selected = d3.select(this).attr("class") });
 
-  function setUpMutiWindow() {
+                                chessPiece.append("text")
+                                .style("font-size", function () { return (30 * factor); })
+                                .attr("id", function (d) { return d.n; })
+                                .attr("text-anchor", "middle")
+                                .text(function (d) { return d.c; })
+                                .attr("y", function (d) { return +d3.select("#" + d.p).attr("y") + (30 * factor) })
+                                .attr("x", function (d) { return +d3.select("#" + d.p).attr("x") + (20 * factor); })
+                                .on("mouseover", function(d){d3.select(this).style("cursor", "pointer");})
+                                .on("mouseout", function(d){d3.select(this).style("cursor", "default");})
+                                .on("click", function () {
+                                d3.selectAll("rect").attr("stroke", "none");
+                                selectedText = d3.select(this).attr("id");
+                                getPiece(selectedText);
+                                findPiece(selectedText);
+                                });
 
-    var infoView = d3.select("#chart2")
-                      .style("height", ((fieldSize * fieldSize) / 10) + "px")
-                      .style("width", ((fieldSize * fieldSize) / 10 + 120) + "px")
-                      .style("margin-right", "100px")
-                      .style("background-color", "lightgrey")
+                                d3.selectAll("rect").attr("click", null);
+                                }
 
-    var firstView = infoView.append("div")
-                            .style("height", ((fieldSize * fieldSize) / 30) + "px")
-                            .style("width", ((fieldSize * fieldSize) / 18) + "px")
-                            .attr("id", "firstView")
-                            .style("background-color", "white")
-                            .style("margin-left", "13px")
-                            .style("border-radius", "25px")
-                            .style("margin-top", "13px")
-                            .style("float", "left");
+                                function moveChessPiece(d){
+                                findandSetNewPiece(selected, d);
+                                findCurrentLoc(d);
+                                }
 
-    var secondView = infoView.append("div")
-                              .style("height", ((fieldSize * fieldSize) / 30) + "px")
-                              .style("width", ((fieldSize * fieldSize) / 18) + "px")
-                              .attr("id", "secondView")
-                              .style("background-color", "white")
-                              .style("border-radius", "25px")
-                              .style("margin-right", "13px")
-                              .style("margin-top", "13px")
-                              .style("float", "right");
+                                function findCurrentLoc(move){
+                                piece.forEach(function(i){
+                                if(selected == i.n){
+                                updateBoard(i.prev, move);
+                                }
+                                })
+                                }
+                                function listPotentialMoves(op){
+                                d3.select("#listDiv").remove();
+                                hightlightSquare(op);
+                                createListOfMovesArea();
+                                updateMoveList(op);
+                                }
 
-    var thirdView = infoView.append("div")
-                            .style("height", ((fieldSize * fieldSize) / 30) + "px")
-                            .style("width", ((fieldSize * fieldSize) / 8.7) + "px")
-                            .attr("id", "thirdView")
-                            .style("background-color", "white")
-                            .style("margin-left", "13px")
-                            .style("border-radius", "25px")
-                            .style("margin-top", "240px");
+                                function findPiece(pieceName){
+                                piece.forEach(function (i) {
+                                if (pieceName == i.n) {
+                                var op = i.op;
+                                listPotentialMoves(op)
+                                }
+                                })
+                                }
 
-    var thirdandhalfView = infoView.append("div")
-                                    .style("height", ((fieldSize * fieldSize) / 40) + "px")
-                                    .style("width", ((fieldSize * fieldSize) / 18) + "px")
-                                    .attr("id", "thirdandhalfView")
-                                    .style("background-color", "white")
-                                    .style("margin-left", "13px")
-                                    .style("border-radius", "25px")
-                                    .style("margin-top", "13px")
-                                    .style("float", "left");
+                                function getPiece(pieceName){
+                                piece.forEach(function (i) {
+                                if (pieceName == i.n) {
+                                updateMoveText(i.c);
+                                }
+                                })
+                                }
+                                function findandSetNewPiece(pieceName, newLoc) {
+                                piece.forEach(function (i) {
+                                if (pieceName == i.n) {
+                                i.prev = i.p;
+                                i.p = newLoc;
+                                i.op = [];
+                                }
+                                })
+                                }
 
-    var fourthView = infoView.append("div")
-                              .style("height", ((fieldSize * fieldSize) / 40) + "px")
-                              .style("width", ((fieldSize * fieldSize) / 18) + "px")
-                              .attr("id", "fourthView")
-                              .style("background-color", "white")
-                              .style("margin-right", "13px")
-                              .style("margin-top", "13px")
-                              .style("border-radius", "25px")
-                              .style("overflow", "auto")
-                              .style("float", "right");
-  }
+                                function updateMoveText(s){
+                                d3.select("#pp").text(s);
+                                }
 
-  function randNum(max, min) {
-    var value = Math.floor(Math.random() * (+max - +min)) + +min;
-    return value;
-  }
+                                function updateMoveList(data){
 
-  function updateBarChart(i){
-    d3.select(".bargraph").remove();
-    createBarChart();
-    var domain = ["whiteW", "draw", "blackW"]
-    var secViewwidth = ((fieldSize * fieldSize) / 18) - 200;
-    var secViewheight = ((fieldSize * fieldSize) / 30) - 31;
-    //var xScale = d3.scaleBand().range([0, secViewwidth + 100]).padding(0.2);
-    //var yScale = d3.scaleLinear().range([300, secViewheight - 50]);
-    var xScale = d3.scaleOrdinal().range([0, 2.556 * i[0].v, 2.556 * (i[0].v + i[1].v)]);
-    var yScale = d3.scaleBand().range([0, secViewheight - 100]).padding(0.2);
-    var widthScale = d3.scaleLinear().range([0, 255.6]);
+                                var listOfMoves = d3.select("#listBox");
+                                listOfMoves.selectAll("moveList").data(data).enter()
+                                .append("p")
+                                .attr("id", function(d){return d;})
+                                .style("display", "inline-block")
+                                .style("margin-right", "10px")
+                                .style("margin-top", "-5px")
+                                .style("font-size", "14px")
+                                .style("background-color", "lightgrey")
+                                .style("border", "1px solid black")
+                                .style("border-radius", "5px")
+                                .text(function(d){return removeFirstLetter(d);})
+                                .on("click", function(){
+                                var d = d3.select(this).attr("id");
+                                //d3.selectAll("rect").attr("stroke", "none");
+                                var dx = d3.select("#" + d).attr("x");
+                                var dy = d3.select("#" + d).attr("y");
+                                var thisPiece = d3.select("." + selected);
+                                var thisPieceX = d3.select("#" + selectedText).attr("x", (20 * factor));
+                                var thisPieceY = d3.select("#" + selectedText).attr("y", (30 * factor));
+                                findPieceID(selected, d);
+                                thisPiece.attr("transform", "translate(" + (dx) + ", " + (dy) + ")");
+                                //d3.selectAll("rect").on("click", null);
+                                findandSetNewPiece(selectedText, d)})
+                                .on("mouseover", function(d){d3.select(this).style("cursor", "pointer");
+                                d3.select(this).classed("selected", true);})
+                                .on("mouseout", function(d){d3.select(this).style("cursor", "default");
+                                d3.select(this).classed("selected", false);});
+                                }
+
+                                function updateLineChart(move){
+                                currentData.potMoves.forEach(function(i){
+                                if(i.name == move){
+                                var total = i.blackW + i.draw + i.whiteW;
+                                var d = (i.draw/total) * 100;
+                                var b = (i.blackW/total) * 100;
+                                var w = (i.whiteW/total) * 100;
+                                xAxis.push({move: move, win: w, lose: b});
+                                }
+                                });
+                                d3.select("#svgLine").remove();
+                                createLineChart();
+                                }
+
+                                function createLineChart(){
+
+                                var svg = d3.select("#thirdView").append("svg")
+                                .attr("id", "svgLine")
+                                .attr("height", ((fieldSize * fieldSize) / 30))
+                                .attr("width", ((fieldSize * fieldSize) / 8.7))
+
+                                var graph = svg.append("g")
+                                .attr("id", "lineChart")
+                                .attr("transform", "translate(100, 0)");
+
+                                var secViewwidth = ((fieldSize * fieldSize) / 18) - 200;
+                                var secViewheight = ((fieldSize * fieldSize) / 30) - 31;
+                                xLineValue = function(d) { return d.move;};
+                                xLineScale = d3.scalePoint().range([5, secViewwidth + 400]);
+                                yLineScale = d3.scaleLinear().range([300, secViewheight - 50]);
+
+                                xLineScale.domain(xAxis.map(xLineValue));
+                                yLineScale.domain([0, 100]);
+
+                                graph.append("g")
+                                .attr("id", "xLineAxis")
+                                .attr("transform", "translate(0,200)")
+                                .call(d3.axisBottom(xLineScale)
+                                .tickSize(0));
+
+                                graph.append("g")
+                                .attr("id", "grid")
+                                .attr("transform", "translate(0,-100)")
+                                .call(d3.axisLeft(yLineScale)
+                                .tickSize(-secViewwidth - 400))
+
+                                var wincircle = graph.selectAll("wcircle").data(xAxis)
+                                .enter()
+                                .append("circle")
+                                .style("fill", "green")
+                                .attr("stroke", "black")
+                                .attr("r", 4)
+                                .attr("cx", function (d) { return xLineScale(xLineValue(d)); })
+                                .attr("cy", function (d) { return yLineScale(d.win) - (100);})
+
+                                var losecircle = graph.selectAll("lcircle").data(xAxis)
+                                .enter()
+                                .append("circle")
+                                .style("fill", "red")
+                                .attr("stroke", "black")
+                                .attr("r", 4)
+                                .attr("cx", function (d) { return xLineScale(xLineValue(d)); })
+                                .attr("cy", function (d) { return yLineScale(d.lose) - (100);})
+
+                                var winline = d3.line()
+                                .x(function (d) { return xLineScale(xLineValue(d)); })
+                                .y(function (d) { return yLineScale(d.win) - (100);})
+                                .curve(d3.curveMonotoneX)
+
+                                var loseline = d3.line()
+                                .x(function (d) { return xLineScale(xLineValue(d)); })
+                                .y(function (d) { return yLineScale(d.lose) - (100);})
+                                .curve(d3.curveMonotoneX)
+
+                                var wline = graph.append("path")
+                                .datum(xAxis)
+                                .attr("fill", "none")
+                                .attr("stroke", "green")
+                                .attr("class", "wline")
+                                .attr("stroke-width", 2)
+                                .attr("d", winline);
+
+                                var lline = graph.append("path")
+                                .datum(xAxis)
+                                .attr("fill", "none")
+                                .attr("stroke", "red")
+                                .attr("stroke-width", 2)
+                                .attr("class", "loseline")
+                                .attr("d", loseline);
+
+                                }
+
+                                function createListOfMovesArea(){
+
+                                var listView =  d3.select("#thirdandhalfView").append("div")
+                                .attr("id", "listDiv")
+                                .style("height", ((fieldSize * fieldSize) / 40) + "px")
+                                .style("width", ((fieldSize * fieldSize) / 36) + 20 + "px")
+                                .style("float", "right");
+                                var lom = listView.append("p")
+                                .attr("id", "moveText")
+                                .style("font-size", "123%")
+                                .style("margin-top", "12px")
+                                .text("List of Next Moves");
+
+                                var listBox = listView.append("div")
+                                .style("width", ((fieldSize * fieldSize) / 36) + "px")
+                                .attr("id", "listBox")
+                                .style("height", "65%")
+                                .style("word-wrap", "break-word")
+                                .style("overflow-y", "auto");
+
+                                }
+
+                                function setMoveText(){
+                                var v =  d3.select("#thirdandhalfView").append("div")
+                                .style("height", ((fieldSize * fieldSize) / 40) + "px")
+                                .style("width", ((fieldSize * fieldSize) / 36) - 20 + "px")
+                                .style("float", "left");
+
+                                var view = v.append("svg")
+                                .attr("height", ((fieldSize * fieldSize) / 40))
+                                .attr("width", ((fieldSize * fieldSize) / 36));
 
 
-    xScale.domain([0, 1, 2]);
-    yScale.domain(domain);
-    widthScale.domain([0, 100]);
-    var bar = d3.select("#barg").selectAll("rect.m").data(i)
+                                var textMove = view.append("text")
+                                .attr("id", "moveText")
+                                .attr("font-size", 20)
+                                .attr("transform", "translate(30, 30)")
+                                .text("Current Piece");
+
+                                var moveBox = view.append("rect")
+                                .attr("id", "pieceBox")
+                                .attr("height", 70)
+                                .attr("width", 70)
+                                .attr("x", 45)
+                                .attr("stroke", "black")
+                                .attr("y", 55)
+                                .attr("fill", "lightgrey")
+                                .attr("opacity", 0.4);
+
+                                var pieceBox = view.append("text")
+                                .attr("x", function () { return +d3.select("#pieceBox").attr("x") + 35})
+                                .attr("y", function () { return +d3.select("#pieceBox").attr("y") + 55})
+                                .attr("text-anchor", "middle")
+                                .attr("id", "pp")
+                                .attr("font-size", 60)
+                                .text("");
+                                }
+
+                                function setUpMutiWindow() {
+
+                                var infoView = d3.select("#chart2")
+                                .style("height", ((fieldSize * fieldSize) / 10) + "px")
+                                .style("width", ((fieldSize * fieldSize) / 10 + 120) + "px")
+                                .style("margin-right", "100px")
+                                .style("background-color", "lightgrey")
+
+                                var firstView = infoView.append("div")
+                                .style("height", ((fieldSize * fieldSize) / 30) + "px")
+                                .style("width", ((fieldSize * fieldSize) / 18) + "px")
+                                .attr("id", "firstView")
+                                .style("background-color", "white")
+                                .style("margin-left", "13px")
+                                .style("border-radius", "25px")
+                                .style("margin-top", "13px")
+                                .style("float", "left");
+
+                                var secondView = infoView.append("div")
+                                .style("height", ((fieldSize * fieldSize) / 30) + "px")
+                                .style("width", ((fieldSize * fieldSize) / 18) + "px")
+                                .attr("id", "secondView")
+                                .style("background-color", "white")
+                                .style("border-radius", "25px")
+                                .style("margin-right", "13px")
+                                .style("margin-top", "13px")
+                                .style("float", "right");
+
+                                var thirdView = infoView.append("div")
+                                .style("height", ((fieldSize * fieldSize) / 30) + "px")
+                                .style("width", ((fieldSize * fieldSize) / 8.7) + "px")
+                                .attr("id", "thirdView")
+                                .style("background-color", "white")
+                                .style("margin-left", "13px")
+                                .style("border-radius", "25px")
+                                .style("margin-top", "240px");
+
+                                var thirdandhalfView = infoView.append("div")
+                                .style("height", ((fieldSize * fieldSize) / 40) + "px")
+                                .style("width", ((fieldSize * fieldSize) / 18) + "px")
+                                .attr("id", "thirdandhalfView")
+                                .style("background-color", "white")
+                                .style("margin-left", "13px")
+                                .style("border-radius", "25px")
+                                .style("margin-top", "13px")
+                                .style("float", "left");
+
+                                var fourthView = infoView.append("div")
+                                .style("height", ((fieldSize * fieldSize) / 40) + "px")
+                                .style("width", ((fieldSize * fieldSize) / 18) + "px")
+                                .attr("id", "fourthView")
+                                .style("background-color", "white")
+                                .style("margin-right", "13px")
+                                .style("margin-top", "13px")
+                                .style("border-radius", "25px")
+                                .style("overflow", "auto")
+                                .style("float", "right");
+                                }
+
+                                function randNum(max, min) {
+                                var value = Math.floor(Math.random() * (+max - +min)) + +min;
+                                return value;
+                                }
+
+                                function updateBarChart(i){
+                                d3.select(".bargraph").remove();
+                                createBarChart();
+                                var domain = ["whiteW", "draw", "blackW"]
+                                var secViewwidth = ((fieldSize * fieldSize) / 18) - 200;
+                                var secViewheight = ((fieldSize * fieldSize) / 30) - 31;
+                                //var xScale = d3.scaleBand().range([0, secViewwidth + 100]).padding(0.2);
+                                //var yScale = d3.scaleLinear().range([300, secViewheight - 50]);
+                                var xScale = d3.scaleOrdinal().range([0, 2.556 * i[0].v, 2.556 * (i[0].v + i[1].v)]);
+                                var yScale = d3.scaleBand().range([0, secViewheight - 100]).padding(0.2);
+                                var widthScale = d3.scaleLinear().range([0, 255.6]);
+
+
+                                xScale.domain([0, 1, 2]);
+                                yScale.domain(domain);
+                                widthScale.domain([0, 100]);
+                                var bar = d3.select("#barg").selectAll("rect.m").data(i)
                                 .enter()
                                 .append("rect")
                                 .style("fill", function (d, i) { return colorScaleBar(i);})
                                 .attr("stroke", "black")
                                 .attr("id", function (d) {return d.name; })
                                 .attr("x", function (d) {
-                                  return xScale(d.v); })
+                                return xScale(d.v); })
                                 .attr("y", function (d) {
-                                  //return yScale(name) - 100;
-                                  return 86;
-                                  })
+                                //return yScale(name) - 100;
+                                return 86;
+                                })
                                 .attr('height', 60)
                                 .attr('width', function (d) {
-                                  return widthScale(d.v);
-                                  });
-  }
+                                return widthScale(d.v);
+                                });
+                                }
 
-  function searchForMoveForBar(move){
-    var list = []
-    currentData.potMoves.forEach(function(i){
-      if(i.name == move){
-        var total = i.blackW + i.draw + i.whiteW;
-        var d = (i.draw/total) * 100;
-        var b = (i.blackW/total) * 100;
-        var w = (i.whiteW/total) * 100;
-        list.push({ name: "whiteW", v: w});
-        list.push({ name: "draw", v: d});
-        list.push({ name: "blackW", v: b });
-        updateBarChart(list);
-      }
-    });
+                                function searchForMoveForBar(move){
+                                var list = []
+                                currentData.potMoves.forEach(function(i){
+                                if(i.name == move){
+                                var total = i.blackW + i.draw + i.whiteW;
+                                var d = (i.draw/total) * 100;
+                                var b = (i.blackW/total) * 100;
+                                var w = (i.whiteW/total) * 100;
+                                list.push({ name: "whiteW", v: w});
+                                list.push({ name: "draw", v: d});
+                                list.push({ name: "blackW", v: b });
+                                updateBarChart(list);
+                                }
+                                });
 
-  }
-  function createBarChart(moves, domain) {
-    var domain = ["whiteW", "draw", "blackW"]
-    var secViewwidth = ((fieldSize * fieldSize) / 18) - 200;
-    var secViewheight = ((fieldSize * fieldSize) / 30) - 31;
+                                }
+                                function createBarChart(moves, domain) {
+                                var domain = ["whiteW", "draw", "blackW"]
+                                var secViewwidth = ((fieldSize * fieldSize) / 18) - 200;
+                                var secViewheight = ((fieldSize * fieldSize) / 30) - 31;
 
-    //var xScale = d3.scaleBand().range([0, secViewwidth + 100]).padding(0.2);
-    //var yScale = d3.scaleLinear().range([300, secViewheight - 50]);
+                                //var xScale = d3.scaleBand().range([0, secViewwidth + 100]).padding(0.2);
+                                //var yScale = d3.scaleLinear().range([300, secViewheight - 50]);
 
-    var xScale = d3.scaleLinear().range([0, secViewwidth + 100]);
-    var yScale = d3.scaleOrdinal().range([  secViewheight - 50]);
-
-
-    xScale.domain([0, 100]);
-    yScale.domain([""]);
-
-    var svg = d3.select("#secondView").append("svg")
-                .attr("class", "bargraph")
-                .attr("height", ((fieldSize * fieldSize) / 30))
-                .attr("width", ((fieldSize * fieldSize) / 18))
-    var graph = svg.append("g")
-                    .attr("id", "barg")
-                    .attr("transform", "translate(50, -10)");
-
-    graph.append("rect")
-          .attr("height", secViewheight - 10)
-          .attr("width", secViewwidth + 100)
-          .attr("transform", "translate(0, 30)")
-          .attr("fill", "lightgrey")
-          .attr("opacity", 0.4);
-
-    graph.append("g")
-          .attr("class", "grid")
-          .attr("transform", "translate(0,200)")
-          .call(d3.axisBottom(xScale)
-          .tickSize(-secViewheight + 15));
-
-    graph.append("g")
-          .attr("class", "grid")
-          .attr("transform", "translate(0,-100)")
-          .call(d3.axisLeft(yScale)
-          .ticks(1)
-          .tickSize(-secViewwidth - 100));
-  }
-
-  function updatePiechart(moves, domain){
-    d3.select(".piegraph").remove();
-    createPieChart(moves, domain);
-  }
-
-  function searchForMoveForPie(){
-    var list = []
-    var domain = []
-    currentData.potMoves.forEach(function(i){
-      list.push({ name: i.name, v: i.numInstances });
-      domain.push(i.name);
-    })
-    updatePiechart(list, domain);
-  }
-
-  function createPieChart(list, domain) {
-
-    var pie = d3.pie()
-                .value(function (d) { return d.v; })
-                .sort(null)
-                (list);
-
-    var arc = d3.arc()
-                .innerRadius(0)
-                .outerRadius(90);
-
-    var graph = d3.select("#firstView").append("svg")
-                  .attr("class", "piegraph")
-                  .attr("height", ((fieldSize * fieldSize) / 30))
-                  .attr("width", ((fieldSize * fieldSize) / 18))
-
-    var piecharts = graph.selectAll("path")
-                          .data(pie)
-                          .enter()
-                          .append("path")
-                          .attr("d", arc)
-                          .attr("id", function (i) { return i.data.name; })
-                          .attr("stroke", "black")
-                          .attr("fill", function (d, i) {
-                          return colorScalePie(i);
-                        });
-    piecharts.attr("transform", "translate(175, 110)")
-  }
+                                var xScale = d3.scaleLinear().range([0, secViewwidth + 100]);
+                                var yScale = d3.scaleOrdinal().range([  secViewheight - 50]);
 
 
-  function updateHistory(object){
-    var o = "dud";
-    currentData.potMoves.forEach(function(i){
-      if(i.name == object){
-        var total = i.blackW + i.draw + i.whiteW;
-        var d = Math.round((i.draw/total) * 100);
-        var b = Math.round((i.blackW/total) * 100);
-        var w = Math.round((i.whiteW/total) * 100);
-        o = [object, w, b, d];
-      }
-    })
+                                xScale.domain([0, 100]);
+                                yScale.domain([""]);
 
-    if(o != "dud"){
-      tableList.push(o);
-      d3.select("#tableBody").remove();
+                                var svg = d3.select("#secondView").append("svg")
+                                .attr("class", "bargraph")
+                                .attr("height", ((fieldSize * fieldSize) / 30))
+                                .attr("width", ((fieldSize * fieldSize) / 18))
+                                var graph = svg.append("g")
+                                .attr("id", "barg")
+                                .attr("transform", "translate(50, -10)");
 
-      var bodyView = d3.select("#historyTable").append("tbody")
-                      .attr("id", "tableBody");
+                                graph.append("rect")
+                                .attr("height", secViewheight - 10)
+                                .attr("width", secViewwidth + 100)
+                                .attr("transform", "translate(0, 30)")
+                                .attr("fill", "lightgrey")
+                                .attr("opacity", 0.4);
 
-      var rows = bodyView.selectAll("tr")
-                          .data(tableList)
-                          .enter()
-                          .append("tr");
+                                graph.append("g")
+                                .attr("class", "grid")
+                                .attr("transform", "translate(0,200)")
+                                .call(d3.axisBottom(xScale)
+                                .tickSize(-secViewheight + 15));
 
-      var values = rows.selectAll("td")
-                        .data(function(d){return d;})
-                        .enter()
-                        .append("td")
-                        .text(function(d){return d;})
-                        .style("text-overflow", "ellipsis")
-                        .style("width", "10%")
-                        .style("text-align", "center");
-    }
+                                graph.append("g")
+                                .attr("class", "grid")
+                                .attr("transform", "translate(0,-100)")
+                                .call(d3.axisLeft(yScale)
+                                .ticks(1)
+                                .tickSize(-secViewwidth - 100));
+                                }
 
-  }
+                                function updatePiechart(moves, domain){
+                                d3.select(".piegraph").remove();
+                                createPieChart(moves, domain);
+                                }
 
-    function historyTable(){
+                                function searchForMoveForPie(){
+                                var list = []
+                                var domain = []
+                                currentData.potMoves.forEach(function(i){
+                                list.push({ name: i.name, v: i.numInstances });
+                                domain.push(i.name);
+                                })
+                                updatePiechart(list, domain);
+                                }
 
-      var table = d3.select("#fourthView").append("table")
-                    .attr("id", "historyTable")
-                    .style("width", "80%")
-                    .style("margin-top", "30px")
-                    .style("margin-left", "40px");
+                                function createPieChart(list, domain) {
 
-      var header = table.append("tr");
+                                var pie = d3.pie()
+                                .value(function (d) { return d.v; })
+                                .sort(null)
+                                (list);
 
-      var th = header.selectAll("th")
-                      .data(["Move", "Win%", "Lose%", "Tie%"])
-                      .enter()
-                      .append("th")
-                      .append("div")
-                      .style("text-align", "left")
-                      .style("padding", "10px")
-                      .text(function(d){return d;});
+                                var arc = d3.arc()
+                                .innerRadius(0)
+                                .outerRadius(90);
 
-      var bodyView = d3.select("#historyTable").append("tbody")
-                      .attr("id", "tableBody");
-    }
+                                var graph = d3.select("#firstView").append("svg")
+                                .attr("class", "piegraph")
+                                .attr("height", ((fieldSize * fieldSize) / 30))
+                                .attr("width", ((fieldSize * fieldSize) / 18))
+
+                                var piecharts = graph.selectAll("path")
+                                .data(pie)
+                                .enter()
+                                .append("path")
+                                .attr("d", arc)
+                                .attr("id", function (i) { return i.data.name; })
+                                .attr("stroke", "black")
+                                .attr("fill", function (d, i) {
+                                return colorScalePie(i);
+                                });
+                                piecharts.attr("transform", "translate(175, 110)")
+                                }
 
 
-  function testFunction(d){
+                                function updateHistory(object){
+                                var o = "dud";
+                                currentData.potMoves.forEach(function(i){
+                                if(i.name == object){
+                                var total = i.blackW + i.draw + i.whiteW;
+                                var d = Math.round((i.draw/total) * 100);
+                                var b = Math.round((i.blackW/total) * 100);
+                                var w = Math.round((i.whiteW/total) * 100);
+                                o = [object, w, b, d];
+                                }
+                                })
 
-    var t = d3.transition().duration(3000);
-    var svg = d3.select("#firstView").append("svg")
-                                    .attr("height", ((fieldSize * fieldSize) / 30))
-                                    .attr("width",((fieldSize * fieldSize) / 8.7));
+                                if(o != "dud"){
+                                tableList.push(o);
+                                d3.select("#tableBody").remove();
 
-    var button = svg.append("rect")
-                    .attr("height", 50)
-                    .attr("width", 50)
-                    .attr("fill", "red")
-                    .attr("transform", "translate(20, 20)")
-                    .on("click", function(){
-                      var dx = d3.select("#G3").attr("x") - (d3.select("#textbBishop2").attr("x") - (20 * factor));
-                      var dy = d3.select("#G3").attr("y") - (d3.select("#textbBishop2").attr("y") - (30 * factor));
-                      var dir = "translate(" + dx + ", " + dy + ")"
-                      d3.select("#bBishop2").transition(t).attr("transform", dir);
-                    })
-  }
+                                var bodyView = d3.select("#historyTable").append("tbody")
+                                .attr("id", "tableBody");
 
-  function getMoves(d){
-    submitURL = "/getmoves"
-    var postReq = {};
-    postReq["moves"] = d;
-    console.log("JS of req:" + JSON.stringify(postReq));
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", submitURL, true);
-    xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-    console.log(submitURL);
-    xhr.send(JSON.stringify(postReq));
-    console.log(xhr);
-    xhr.onloadend = function () {
-      console.log(xhr);
-      if (xhr.readyState == XMLHttpRequest.DONE) {
-        console.log(xhr.responseText);
-        if(xhr.responseText != "404, tree not found"){
-          currentData = JSON.parse(xhr.responseText.replace(/\'/g,"\""))
-          console.log(currentData)
-          distributePotentialMove();
-          searchForMoveForPie();
-          //TODO update everything that needs to be update.
-        }
-        else{
-          //TODO - shouldn't get here? something about unique game?
-        }
-      } else {
-        alert("Did not get response, server is down?")
-      }
-    }
-  }
-</script>
+                                var rows = bodyView.selectAll("tr")
+                                .data(tableList)
+                                .enter()
+                                .append("tr");
+
+                                var values = rows.selectAll("td")
+                                .data(function(d){return d;})
+                                .enter()
+                                .append("td")
+                                .text(function(d){return d;})
+                                .style("text-overflow", "ellipsis")
+                                .style("width", "10%")
+                                .style("text-align", "center");
+                                }
+
+                                }
+
+                                function historyTable(){
+
+                                var table = d3.select("#fourthView").append("table")
+                                .attr("id", "historyTable")
+                                .style("width", "80%")
+                                .style("margin-top", "30px")
+                                .style("margin-left", "40px");
+
+                                var header = table.append("tr");
+
+                                var th = header.selectAll("th")
+                                .data(["Move", "Win%", "Lose%", "Tie%"])
+                                .enter()
+                                .append("th")
+                                .append("div")
+                                .style("text-align", "left")
+                                .style("padding", "10px")
+                                .text(function(d){return d;});
+
+                                var bodyView = d3.select("#historyTable").append("tbody")
+                                .attr("id", "tableBody");
+                                }
+
+
+                                function testFunction(d){
+
+                                var t = d3.transition().duration(3000);
+                                var svg = d3.select("#firstView").append("svg")
+                                .attr("height", ((fieldSize * fieldSize) / 30))
+                                .attr("width",((fieldSize * fieldSize) / 8.7));
+
+                                var button = svg.append("rect")
+                                .attr("height", 50)
+                                .attr("width", 50)
+                                .attr("fill", "red")
+                                .attr("transform", "translate(20, 20)")
+                                .on("click", function(){
+                                var dx = d3.select("#G3").attr("x") - (d3.select("#textbBishop2").attr("x") - (20 * factor));
+                                var dy = d3.select("#G3").attr("y") - (d3.select("#textbBishop2").attr("y") - (30 * factor));
+                                var dir = "translate(" + dx + ", " + dy + ")"
+                                d3.select("#bBishop2").transition(t).attr("transform", dir);
+                                })
+                                }
+
+                                function getMoves(d){
+                                submitURL = "/getmoves"
+                                var postReq = {};
+                                postReq["moves"] = d;
+                                console.log("JS of req:" + JSON.stringify(postReq));
+                                var xhr = new XMLHttpRequest();
+                                xhr.open("POST", submitURL, true);
+                                xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+                                console.log(submitURL);
+                                xhr.send(JSON.stringify(postReq));
+                                console.log(xhr);
+                                xhr.onloadend = function () {
+                                console.log(xhr);
+                                if (xhr.readyState == XMLHttpRequest.DONE) {
+                                console.log(xhr.responseText);
+                                if(xhr.responseText != "404, tree not found"){
+                                currentData = JSON.parse(xhr.responseText.replace(/\'/g,"\""))
+                                console.log(currentData)
+                                distributePotentialMove();
+                                searchForMoveForPie();
+                                //TODO update everything that needs to be update.
+                                }
+                                else{
+                                //TODO - shouldn't get here? something about unique game?
+                                }
+                                } else {
+                                alert("Did not get response, server is down?")
+                                }
+                                }
+                                }
+    </script>
 </html>
